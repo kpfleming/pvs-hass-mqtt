@@ -1,0 +1,23 @@
+name: Lint checks
+
+on:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - 'tox.ini'
+    - 'src/*.py'
+    - 'workflow-support/*.sh'
+    - '.github/workflows/lint.yml'
+    - '.github/actions/lint/action.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    container:
+      image: docker://quay.io/phm-test-images/tox:main
+    steps:
+    - uses: actions/checkout@v3
+    - uses: ./.github/actions/lint
+      with:
+        lintly_token: ${{ secrets.LINTLY_TOKEN }}
