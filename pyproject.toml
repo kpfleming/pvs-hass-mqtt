@@ -1,21 +1,19 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "pvs-hass-mqtt"
-version = "0.0.1"
 authors = [
   { name="Kevin P. Fleming", email="kevin@km6g.us" },
 ]
 description = "An MQTT-based integration for SunPower PVS and Home Assistant"
 readme = "README.md"
-license = { file="LICENSE" }
+license = "Apache-2.0"
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Environment :: Console",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
@@ -24,7 +22,21 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
+dynamic = ["version"]
+dependencies = []
 
 [project.urls]
 "Homepage" = "https://github.com/kpfleming/pvs-hass-mqtt"
 "Bug Tracker" = "https://github.com/kpfleming/pvs-hass-mqttt/issues"
+
+[project.scripts]
+pvs-hass-mqtt = "pvs_hass_mqtt.cli:cli"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/pvs_hass_mqtt/__version__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pvs_hass_mqtt"]

@@ -1,1 +1,2 @@
 .tox
+src/pvs-hass-mqtt/__version__.py
