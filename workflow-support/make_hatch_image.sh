@@ -38,10 +38,8 @@ buildcmd sh -c "rm -rf /usr/local/bin/python3.??m*"
 
 buildcmd pip3.9 install hatch
 buildah copy "${c}" "${scriptdir}/../pyproject.toml" /root/pyproject.toml
-# hack to work around Hatch not wanting to pre-create environments
-buildcmd sed -i -e "s/# PRECREATE //" /root/pyproject.toml
 for env in "${hatchenvs[@]}"; do
-    buildcmd hatch --data-dir /root/hatch --config /root/pyproject.toml env create "${env}"
+    buildcmd env SKIP_INSTALL=1 hatch --data-dir /root/hatch --config /root/pyproject.toml env create "${env}"
 done
 
 buildcmd apt-get remove --yes --purge "${pydeps[@]}"

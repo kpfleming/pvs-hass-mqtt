@@ -1,2 +1,2 @@
-def cli():
+def cli() -> None:
     pass
