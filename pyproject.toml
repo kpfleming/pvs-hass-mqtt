@@ -38,5 +38,16 @@ source = "vcs"
 [tool.hatch.build.hooks.vcs]
 version-file = "src/pvs_hass_mqtt/__version__.py"
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+  ".github",
+  ".python-version",
+  "*/.gitkeep",
+  "workflow-support",
+]
+artifacts = [
+  "src/pvs_hass_mqtt/__version__.py",
+]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/pvs_hass_mqtt"]

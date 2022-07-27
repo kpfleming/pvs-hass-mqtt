@@ -1,2 +1,4 @@
+*~
 .tox
-src/pvs-hass-mqtt/__version__.py
+dist
+src/pvs_hass_mqtt/__version__.py
