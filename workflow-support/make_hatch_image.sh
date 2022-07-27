@@ -4,10 +4,11 @@ set -ex
 
 scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 lintdeps=(shellcheck)
-pydeps=(build-essential libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
+pydeps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
+hatchenvs=(lint lint-action ci)
 
-c=$(buildah from debian:buster)
+c=$(buildah from debian:bullseye)
 
 buildcmd() {
     buildah run --network host "${c}" -- "$@"
@@ -35,9 +36,13 @@ done
 buildcmd sh -c "rm -rf /usr/local/bin/python3.?m*"
 buildcmd sh -c "rm -rf /usr/local/bin/python3.??m*"
 
-buildcmd pip3.9 install tox
-buildah copy "${c}" "${scriptdir}/../tox.ini" /root/tox.ini
-buildcmd tox -eALL --notest --workdir /root/tox
+buildcmd pip3.9 install hatch
+buildah copy "${c}" "${scriptdir}/../pyproject.toml" /root/pyproject.toml
+# hack to work around Hatch not wanting to pre-create environments
+buildcmd sed -i -e "s/# PRECREATE //" /root/pyproject.toml
+for env in "${hatchenvs[@]}"; do
+    buildcmd hatch --data-dir /root/hatch --config /root/pyproject.toml env create "${env}"
+done
 
 buildcmd apt-get remove --yes --purge "${pydeps[@]}"
 buildcmd apt-get autoremove --yes --purge

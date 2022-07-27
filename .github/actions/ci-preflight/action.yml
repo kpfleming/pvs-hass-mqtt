@@ -12,7 +12,7 @@ runs:
     with:
       filters: |
         image_files:
-        - 'tox.ini'
+        - 'pyproject.toml'
         - 'workflow-support/make_*_image.sh'
         - '.github/actions/make-*-image/action.yml'
     if: github.event_name != 'schedule'

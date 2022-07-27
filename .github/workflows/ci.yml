@@ -5,8 +5,8 @@ on:
     branches:
     - main
     paths:
-    - 'src/*.py'
-    - 'tox.ini'
+    - 'src/**.py'
+    - 'pyproject.toml'
     - 'workflow-support/test-*.yml'
     - 'workflow-support/make_*_image.sh'
     - '.github/workflows/ci.yml'
@@ -19,8 +19,8 @@ on:
     branches:
     - main
     paths:
-    - 'src/*.py'
-    - 'tox.ini'
+    - 'src/**.py'
+    - 'pyproject.toml'
     - 'workflow-support/test-*.yml'
     - 'workflow-support/make_*_image.sh'
     - '.github/workflows/ci.yml'
@@ -43,30 +43,30 @@ jobs:
     - uses: actions/checkout@v3
     - id: preflight
       uses: ./.github/actions/ci-preflight
-  image-tox:
+  image-hatch:
     runs-on: ubuntu-20.04
     needs:
     - preflight
     steps:
     - uses: actions/checkout@v3
-    - uses: ./.github/actions/make-tox-image
+    - uses: ./.github/actions/make-hatch-image
       if: needs.preflight.outputs.need_image == 'true'
       with:
-        image_name: ${{ needs.preflight.outputs.registry_base }}/tox:${{ needs.preflight.outputs.image_tag }}
+        image_name: ${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
         quay_username: ${{ secrets.QUAY_BOT_NAME }}
         quay_password: ${{ secrets.QUAY_BOT_PASSWORD }}
   test:
     runs-on: ubuntu-20.04
     needs:
     - preflight
-    - image-tox
+    - image-hatch
     strategy:
       matrix:
-        python: [py38, py39, py310, py311]
+        python: [py3.8, py3.9, py3.10, py3.11]
       fail-fast: false
     container:
-      image: docker://${{ needs.preflight.outputs.registry_base }}/tox:${{ needs.preflight.outputs.image_tag }}
+      image: docker://${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
     - name: run tests
-      run: tox -e${{ matrix.python }} --workdir /root/tox
+      run: hatch --data-dir /root/hatch run ci.${{ matrix.python }}:ci

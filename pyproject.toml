@@ -9,7 +9,7 @@ authors = [
 ]
 description = "An MQTT-based integration for SunPower PVS and Home Assistant"
 readme = "README.md"
-license = "Apache-2.0"
+license = { text="Apache-2.0" }
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -23,7 +23,10 @@ classifiers = [
     "Typing :: Typed",
 ]
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+    "paho-mqtt",
+    "requests",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/kpfleming/pvs-hass-mqtt"
@@ -51,3 +54,44 @@ artifacts = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pvs_hass_mqtt"]
+
+[tool.hatch.envs.lint]
+detached = true
+dependencies = [
+    "black",
+    "flake8",
+    "mypy",
+]
+
+[tool.hatch.envs.lint.scripts]
+lint = [
+     "flake8 --ignore=E501,E402,E231",
+     "black --check .",
+     "bash -c 'shellcheck workflow-support/*.sh'",
+]
+
+[tool.hatch.envs.lint-action]
+template = "lint"
+extra-dependencies = [
+    "lintly23",
+    "markupsafe==2.0.1",
+]
+
+[tool.hatch.envs.lint-action.scripts]
+lint = [
+    "bash -c 'flake8 --ignore=E501,E402,E231 | lintly --format=flake8 --no-request-changes'",
+    "bash -c 'black --check . 2>&1 >/dev/null | lintly --format=black --no-request-changes'",
+    "bash -c 'shellcheck workflow-support/*.sh'",
+]
+
+[tool.hatch.envs.ci]
+# PRECREATE detached=true
+dependencies = [
+    "pytest",
+]
+
+[[tool.hatch.envs.ci.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11"]
+
+[tool.hatch.envs.ci.scripts]
+ci = "ls"
