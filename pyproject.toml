@@ -42,7 +42,7 @@ pvs-hass-mqtt = "pvs_hass_mqtt.cli:cli"
 source = "vcs"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/pvs_hass_mqtt/__version__.py"
+version-file = "src/pvs_hass_mqtt/version.py"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -63,11 +63,11 @@ dependencies = [
     "flake8-builtins",
     "flake8-comprehensions",
 #    "flake8-docstrings",
-    "flake8-isort",
     "flake8-new-union-types",
     "flake8-pep585",
     "flake8-pytest-style",
     "flake8-use-fstring",
+    "isort",
     "mypy",
     "pep8-naming",
     "types-PyYAML",
@@ -76,8 +76,9 @@ dependencies = [
 
 [tool.hatch.envs.lint.scripts]
 lint = [
-     "flake8",
      "black .",
+     "isort .",
+     "flake8",
      "shellcheck workflow-support/*.sh",
 ]
 
@@ -90,8 +91,9 @@ extra-dependencies = [
 
 [tool.hatch.envs.lint-action.scripts]
 lint = [
-    "flake8 | lintly --format=flake8 --no-request-changes",
-    "black . --check 2>&1 >/dev/null | lintly --format=black --no-request-changes",
+    "black --check . 2>&1 >/dev/null | lintly --format black --no-request-changes",
+    "isort --check . | lintly --format unix --no-request-changes",
+    "flake8 | lintly --format flake8 --no-request-changes",
     "shellcheck workflow-support/*.sh",
 ]
 
@@ -115,3 +117,4 @@ target-version = ["py310"]
 
 [tool.isort]
 profile = "black"
+line_length = 100
