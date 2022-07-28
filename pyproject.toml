@@ -24,7 +24,10 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
+    "attrs",
+    "Cerberus",
     "paho-mqtt",
+    "PyYAML",
     "requests",
 ]
 
@@ -42,14 +45,9 @@ source = "vcs"
 version-file = "src/pvs_hass_mqtt/__version__.py"
 
 [tool.hatch.build.targets.sdist]
-exclude = [
-  ".github",
-  ".python-version",
-  "*/.gitkeep",
-  "workflow-support",
-]
-artifacts = [
-  "src/pvs_hass_mqtt/__version__.py",
+include = [
+    "src",
+    "tests",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -72,13 +70,15 @@ dependencies = [
     "flake8-use-fstring",
     "mypy",
     "pep8-naming",
+    "types-PyYAML",
+    "types-requests",
 ]
 
 [tool.hatch.envs.lint.scripts]
 lint = [
      "flake8",
      "black .",
-     "bash -c 'shellcheck workflow-support/*.sh'",
+     "shellcheck workflow-support/*.sh",
 ]
 
 [tool.hatch.envs.lint-action]
@@ -90,9 +90,9 @@ extra-dependencies = [
 
 [tool.hatch.envs.lint-action.scripts]
 lint = [
-    "bash -c 'flake8 | lintly --format=flake8 --no-request-changes'",
-    "bash -c 'black . --check 2>&1 >/dev/null | lintly --format=black --no-request-changes'",
-    "bash -c 'shellcheck workflow-support/*.sh'",
+    "flake8 | lintly --format=flake8 --no-request-changes",
+    "black . --check 2>&1 >/dev/null | lintly --format=black --no-request-changes",
+    "shellcheck workflow-support/*.sh",
 ]
 
 [tool.hatch.envs.ci]
