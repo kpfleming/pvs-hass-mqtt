@@ -42,9 +42,8 @@ buildcmd sh -c "rm -rf /usr/local/bin/python3.?m*"
 buildcmd sh -c "rm -rf /usr/local/bin/python3.??m*"
 
 buildcmd pip3.9 install hatch
-buildah copy "${c}" "${scriptdir}/../pyproject.toml" /root/pyproject.toml
 for env in "${hatchenvs[@]}"; do
-    buildcmd env SKIP_INSTALL=1 hatch --data-dir /root/hatch --config /root/pyproject.toml env create "${env}"
+    buildah run --network host --volume "$(realpath ${scriptdir}/..)":/src --workingdir /src "${c}" -- hatch --data-dir /root/hatch env create "${env}"
 done
 
 buildcmd apt remove --yes --purge "${pydeps[@]}"
