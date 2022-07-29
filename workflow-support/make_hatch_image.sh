@@ -27,7 +27,6 @@ buildcmd apt install --yes --quiet=2 "${pydeps[@]}"
 
 buildcmd apt install --yes --quiet=2 "${lintdeps[@]}"
 
-buildah copy "${c}" "${scriptdir}/pybuild.sh" /pybuild.sh
 buildcmd apt install --yes --quiet=2 "${projdeps[@]}"
 
 for pyver in "${pyversions[@]}"; do
@@ -35,7 +34,8 @@ for pyver in "${pyversions[@]}"; do
     # strip off any beta or rc suffix to get version directory
     verdir=$(echo "${pyver}" | sed -e 's/^\([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\).*$/\1/')
     wget --quiet --output-document - "https://www.python.org/ftp/python/${verdir}/Python-${pyver}.tgz" | tar --extract --gzip
-    buildah run --network host --volume "$(pwd)/Python-${pyver}:/${pyver}" "${c}" -- /pybuild.sh "/${pyver}"
+    buildah run --network host --volume "${scriptdir}":/scriptdir --volume "$(pwd)/Python-${pyver}":"/${pyver}" "${c}" -- /scriptdir/pybuild.sh "/${pyver}"
+    rm -rf Python-${pyver}
 done
 
 buildcmd sh -c "rm -rf /usr/local/bin/python3.?m*"
