@@ -2,6 +2,8 @@
 
 set -ex
 
+projname="pvs-hass-mqtt"
+
 scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
 lintdeps=(shellcheck)
@@ -48,7 +50,13 @@ for env in "${hatchenvs[@]}"; do
     # install all of the project's dependencies and the project,
     # then runs pip to uninstall the project, leaving the env
     # in place with the dependencies
-    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir /src "${c}" -- hatch --data-dir /root/hatch -e "${env}" run pip uninstall --yes pvs-hass-mqtt
+    #
+    # the bizarre volume-mount path matches the path that
+    # actions/checkout@v3 will place the checkout into;
+    # this is needed because Hatch uses the path
+    # as part of the hash calculation for the name
+    # of the directory to hold the environments
+    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/__w/${projname}/${projname}" --workingdir "/__w/${projname}/${projname}" "${c}" -- hatch --data-dir /root/hatch -e "${env}" run pip uninstall --yes "${projname}"
 done
 
 buildcmd apt remove --yes --purge "${pydeps[@]}"
