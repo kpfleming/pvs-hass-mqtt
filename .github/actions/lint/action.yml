@@ -6,7 +6,7 @@ runs:
   using: "composite"
   steps:
   - name: run lint tests
-    run: hatch --data-dir /root/hatch run lint-action:lint
+    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint-action hatch run lint-action:lint
     shell: bash
     env:
       LINTLY_API_KEY: ${{ inputs.lintly_token }}

@@ -69,6 +69,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: run tests
-      run: hatch --data-dir /root/hatch run ci.${{ matrix.python }}:ci
+      run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/ci.${{ matrix.python }} hatch run ci.${{ matrix.python }}:ci
     - name: run tests with systemd
-      run: hatch --data-dir /root/hatch run ci-systemd.${{ matrix.python }}:ci
+      run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/ci-systemd.${{ matrix.python }} hatch run ci-systemd.${{ matrix.python }}:ci

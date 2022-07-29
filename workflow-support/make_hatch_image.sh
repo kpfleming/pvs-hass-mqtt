@@ -13,7 +13,8 @@ proj_build_deps=(pkg-config libsystemd-dev)
 
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
 
-hatchenvs=(lint lint-action ci ci-systemd)
+hatchenvs=(lint-action ci ci-systemd)
+cimatrix=(py3.8 py3.9 py3.10 py3.11)
 
 c=$(buildah from debian:bullseye)
 
@@ -45,18 +46,26 @@ buildcmd sh -c "rm -rf /usr/local/bin/python3.?m*"
 buildcmd sh -c "rm -rf /usr/local/bin/python3.??m*"
 
 buildcmd pip3.10 install hatch
+buildcmd mkdir /root/hatch
 for env in "${hatchenvs[@]}"; do
     # this looks weird... but it causes Hatch to create the env,
     # install all of the project's dependencies and the project,
     # then runs pip to uninstall the project, leaving the env
     # in place with the dependencies
     #
-    # the bizarre volume-mount path matches the path that
-    # actions/checkout@v3 will place the checkout into;
-    # this is needed because Hatch uses the path
-    # as part of the hash calculation for the name
-    # of the directory to hold the environments
-    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/__w/${projname}/${projname}" --workingdir "/__w/${projname}/${projname}" "${c}" -- hatch --data-dir /root/hatch -e "${env}" run pip uninstall --yes "${projname}"
+    # HATCH_ENV_TYPE_VIRTUAL_PATH is used here to force the
+    # environments to be created in predictable locations
+    case "${env}" in
+	ci*)
+	    for py in "${cimatrix[@]}"; do
+		buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir "/src" "${c}" -- env "HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/${env}.${py}" hatch env create "${env}.${py}"
+		buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir "/src" "${c}" -- env "HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/${env}.${py}" hatch -e "${env}.${py}" run pip uninstall --yes "${projname}"
+	    done
+	;;
+	*)
+	    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir "/src" "${c}" -- env "HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/${env}" hatch env create "${env}"
+	;;
+    esac
 done
 
 buildcmd apt remove --yes --purge "${py_deps[@]}"
