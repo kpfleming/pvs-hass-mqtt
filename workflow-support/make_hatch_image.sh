@@ -20,12 +20,12 @@ buildcmd() {
 
 buildah config --workingdir /root "${c}"
 
-buildcmd apt-get update --quiet=2
-buildcmd apt-get install --yes --quiet=2 git
+buildcmd apt update --quiet=2
+buildcmd apt install --yes --quiet=2 git
 
-buildcmd apt-get install --yes --quiet=2 "${pydeps[@]}"
+buildcmd apt install --yes --quiet=2 "${pydeps[@]}"
 
-buildcmd apt-get install --yes --quiet=2 "${lintdeps[@]}"
+buildcmd apt install --yes --quiet=2 "${lintdeps[@]}"
 
 buildah copy "${c}" "${scriptdir}/pybuild.sh" /pybuild.sh
 buildcmd apt install --yes --quiet=2 "${projdeps[@]}"
@@ -47,9 +47,9 @@ for env in "${hatchenvs[@]}"; do
     buildcmd env SKIP_INSTALL=1 hatch --data-dir /root/hatch --config /root/pyproject.toml env create "${env}"
 done
 
-buildcmd apt-get remove --yes --purge "${pydeps[@]}"
-buildcmd apt-get autoremove --yes --purge
-buildcmd apt-get clean autoclean
+buildcmd apt remove --yes --purge "${pydeps[@]}"
+buildcmd apt autoremove --yes --purge
+buildcmd apt clean autoclean
 buildcmd sh -c "rm -rf /var/lib/apt/lists/*"
 buildcmd rm -rf /root/.cache
 
