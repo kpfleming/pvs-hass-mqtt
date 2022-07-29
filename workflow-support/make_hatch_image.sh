@@ -3,9 +3,13 @@
 set -ex
 
 scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
 lintdeps=(shellcheck)
 pydeps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
+projdeps=(pkg-config libsystemd-dev)
+
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
+
 hatchenvs=(lint lint-action ci ci-systemd)
 
 c=$(buildah from debian:bullseye)
@@ -24,6 +28,7 @@ buildcmd apt-get install --yes --quiet=2 "${pydeps[@]}"
 buildcmd apt-get install --yes --quiet=2 "${lintdeps[@]}"
 
 buildah copy "${c}" "${scriptdir}/pybuild.sh" /pybuild.sh
+buildcmd apt install --yes --quiet=2 "${projdeps[@]}"
 
 for pyver in "${pyversions[@]}"; do
     # shellcheck disable=SC2001
