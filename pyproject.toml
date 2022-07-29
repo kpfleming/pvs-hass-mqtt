@@ -87,6 +87,7 @@ lint = [
      "black .",
      "isort .",
      "flake8",
+     "mypy .",
      "shellcheck workflow-support/*.sh",
 ]
 
@@ -102,6 +103,7 @@ lint = [
     "black --check . 2>&1 >/dev/null | lintly --format black --no-request-changes",
     "isort --check . | lintly --format unix --no-request-changes",
     "flake8 | lintly --format flake8 --no-request-changes",
+    "mypy . | lintly --format unix --no-request-changes",
     "shellcheck workflow-support/*.sh",
 ]
 
