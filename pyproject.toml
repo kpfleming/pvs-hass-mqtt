@@ -51,7 +51,10 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/pvs_hass_mqtt"]
+packages = [
+    "src/pvs_hass_mqtt",
+    "src/hass_mqtt",
+]
 
 [tool.hatch.envs.lint]
 detached = true
