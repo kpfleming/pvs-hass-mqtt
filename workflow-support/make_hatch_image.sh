@@ -6,7 +6,8 @@ scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
 lintdeps=(shellcheck)
 pydeps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
-projdeps=(pkg-config libsystemd-dev)
+proj_deps=(libsystemd)
+proj_build_deps=(pkg-config libsystemd-dev)
 
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
 
@@ -27,26 +28,31 @@ buildcmd apt install --yes --quiet=2 "${pydeps[@]}"
 
 buildcmd apt install --yes --quiet=2 "${lintdeps[@]}"
 
-buildcmd apt install --yes --quiet=2 "${projdeps[@]}"
+buildcmd apt install --yes --quiet=2 "${projdeps[@]}" "${proj_build_deps[@]}"
 
 for pyver in "${pyversions[@]}"; do
     # shellcheck disable=SC2001
     # strip off any beta or rc suffix to get version directory
     verdir=$(echo "${pyver}" | sed -e 's/^\([[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\).*$/\1/')
     wget --quiet --output-document - "https://www.python.org/ftp/python/${verdir}/Python-${pyver}.tgz" | tar --extract --gzip
-    buildah run --network host --volume "${scriptdir}":/scriptdir --volume "$(pwd)/Python-${pyver}":"/${pyver}" "${c}" -- /scriptdir/pybuild.sh "/${pyver}"
-    rm -rf Python-${pyver}
+    buildah run --network host --volume "${scriptdir}:/scriptdir" --volume "$(pwd)/Python-${pyver}:/${pyver}" "${c}" -- /scriptdir/pybuild.sh "/${pyver}"
+    rm -rf "Python-${pyver}"
 done
 
 buildcmd sh -c "rm -rf /usr/local/bin/python3.?m*"
 buildcmd sh -c "rm -rf /usr/local/bin/python3.??m*"
 
-buildcmd pip3.9 install hatch
+buildcmd pip3.10 install hatch
 for env in "${hatchenvs[@]}"; do
-    buildah run --network host --volume "$(realpath ${scriptdir}/..)":/src --workingdir /src "${c}" -- hatch --data-dir /root/hatch env create "${env}"
+    # this looks weird... but it causes Hatch to create the env,
+    # install all of the project's dependencies and the project,
+    # then runs pip to uninstall the project, leaving the env
+    # in place with the dependencies
+    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir /src "${c}" -- hatch --data-dir /root/hatch -e "${env}" run pip uninstall --yes pvs-hass-mqtt
 done
 
 buildcmd apt remove --yes --purge "${pydeps[@]}"
+buildcmd apt remove --yes --purge "${proj_build_deps[@]}"
 buildcmd apt autoremove --yes --purge
 buildcmd apt clean autoclean
 buildcmd sh -c "rm -rf /var/lib/apt/lists/*"
