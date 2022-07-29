@@ -6,9 +6,9 @@ projname="pvs-hass-mqtt"
 
 scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-lintdeps=(shellcheck)
-pydeps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
-proj_deps=(libsystemd)
+py_deps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
+lint_deps=(shellcheck)
+proj_deps=(libsystemd0)
 proj_build_deps=(pkg-config libsystemd-dev)
 
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
@@ -26,11 +26,11 @@ buildah config --workingdir /root "${c}"
 buildcmd apt update --quiet=2
 buildcmd apt install --yes --quiet=2 git
 
-buildcmd apt install --yes --quiet=2 "${pydeps[@]}"
+buildcmd apt install --yes --quiet=2 "${py_deps[@]}"
 
-buildcmd apt install --yes --quiet=2 "${lintdeps[@]}"
+buildcmd apt install --yes --quiet=2 "${lint_deps[@]}"
 
-buildcmd apt install --yes --quiet=2 "${projdeps[@]}" "${proj_build_deps[@]}"
+buildcmd apt install --yes --quiet=2 "${proj_deps[@]}" "${proj_build_deps[@]}"
 
 for pyver in "${pyversions[@]}"; do
     # shellcheck disable=SC2001
@@ -59,7 +59,7 @@ for env in "${hatchenvs[@]}"; do
     buildah run --network host --volume "$(realpath "${scriptdir}/.."):/__w/${projname}/${projname}" --workingdir "/__w/${projname}/${projname}" "${c}" -- hatch --data-dir /root/hatch -e "${env}" run pip uninstall --yes "${projname}"
 done
 
-buildcmd apt remove --yes --purge "${pydeps[@]}"
+buildcmd apt remove --yes --purge "${py_deps[@]}"
 buildcmd apt remove --yes --purge "${proj_build_deps[@]}"
 buildcmd apt autoremove --yes --purge
 buildcmd apt clean autoclean
