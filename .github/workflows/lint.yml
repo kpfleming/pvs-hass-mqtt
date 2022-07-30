@@ -7,17 +7,31 @@ on:
     paths:
     - 'pyproject.toml'
     - 'src/**.py'
-    - 'workflow-support/*.sh'
     - '.github/workflows/lint.yml'
+    - '.github/actions/preflight/action.yml'
     - '.github/actions/lint/action.yml'
 
+env:
+  registry_base: 'quay.io/phm-test-images'
+
 jobs:
+  preflight:
+    runs-on: ubuntu-20.04
+    outputs:
+      need_image: ${{ steps.preflight.outputs.need_image }}
+      image_tag: ${{ steps.preflight.outputs.image_tag }}
+      # workaround to make registry_base available in jobs
+      registry_base: ${{ env.registry_base }}
+    steps:
+    - uses: actions/checkout@v3
+    - id: preflight
+      uses: ./.github/actions/preflight
   lint:
     runs-on: ubuntu-20.04
+    needs:
+    - preflight
     container:
-      image: docker://quay.io/phm-test-images/hatch:main
+      image: docker://${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/lint
-      with:
-        lintly_token: ${{ secrets.LINTLY_TOKEN }}

@@ -5,12 +5,12 @@ on:
     branches:
     - main
     paths:
-    - 'src/**.py'
     - 'pyproject.toml'
-    - 'workflow-support/test-*.yml'
+    - 'src/**.py'
     - 'workflow-support/make_*_image.sh'
     - '.github/workflows/ci.yml'
-    - '.github/actions/*/action.yml'
+    - '.github/actions/preflight/action.yml'
+    - '.github/actions/make-hatch-image/action.yml'
   pull_request:
     types:
     - opened
@@ -19,12 +19,12 @@ on:
     branches:
     - main
     paths:
-    - 'src/**.py'
     - 'pyproject.toml'
-    - 'workflow-support/test-*.yml'
+    - 'src/**.py'
     - 'workflow-support/make_*_image.sh'
     - '.github/workflows/ci.yml'
-    - '.github/actions/*/action.yml'
+    - '.github/actions/preflight/action.yml'
+    - '.github/actions/make-hatch-image/action.yml'
   schedule:
     - cron: "35 4 * * 6"
 
@@ -42,7 +42,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - id: preflight
-      uses: ./.github/actions/ci-preflight
+      uses: ./.github/actions/preflight
   image-hatch:
     runs-on: ubuntu-20.04
     needs:
@@ -68,6 +68,9 @@ jobs:
       image: docker://${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
+    - name: run linters
+      uses: ./.github/actions/lint
+      if: (github.event_name != 'pull_request') && (needs.preflight.outputs.need_image == 'true')
     - name: run tests
       run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/ci.${{ matrix.python }} hatch run ci.${{ matrix.python }}:ci
     - name: run tests with systemd

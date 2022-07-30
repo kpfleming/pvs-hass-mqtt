@@ -1,12 +1,24 @@
 name: "Run linter checks"
-inputs:
-  lintly_token:
-    required: true
 runs:
   using: "composite"
   steps:
-  - name: run lint tests
-    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint-action hatch run lint-action:lint
+  - name: run black
+    if: success() || failure()
+    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run black --check --diff .
     shell: bash
-    env:
-      LINTLY_API_KEY: ${{ inputs.lintly_token }}
+  - name: run isort
+    if: success() || failure()
+    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run isort --check --diff .
+    shell: bash
+  - name: run flake8
+    if: success() || failure()
+    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run flake8
+    shell: bash
+  - name: run mypy
+    if: success() || failure()
+    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run mypy .
+    shell: bash
+  - name: run shellcheck
+    if: success() || failure()
+    run: shellcheck workflow-support/*.sh
+    shell: bash

@@ -13,8 +13,10 @@ proj_build_deps=(pkg-config libsystemd-dev)
 
 pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
 
-hatchenvs=(lint-action ci ci-systemd)
+hatchenvs=(lint ci ci-systemd)
 cimatrix=(py3.8 py3.9 py3.10 py3.11)
+
+# reviewdog_version="0.14.1"
 
 c=$(buildah from debian:bullseye)
 
@@ -74,6 +76,12 @@ buildcmd apt autoremove --yes --purge
 buildcmd apt clean autoclean
 buildcmd sh -c "rm -rf /var/lib/apt/lists/*"
 buildcmd rm -rf /root/.cache
+
+# install reviewdog
+# wget "https://github.com/reviewdog/reviewdog/releases/download/v${reviewdog_version}/reviewdog_${reviewdog_version}_Linux_x86_64.tar.gz"
+# tar xf "reviewdog_${reviewdog_version}_Linux_x86_64.tar.gz" reviewdog
+# buildah copy "${c}" reviewdog /usr/local/bin
+# rm "reviewdog_${reviewdog_version}_Linux_x86_64.tar.gz" reviewdog
 
 # shellcheck disable=SC2154 # image_name set in external environment
 if buildah images --quiet "${image_name}"; then
