@@ -66,6 +66,7 @@ for env in "${hatchenvs[@]}"; do
 	;;
 	*)
 	    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir "/src" "${c}" -- env "HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/${env}" hatch env create "${env}"
+	    buildah run --network host --volume "$(realpath "${scriptdir}/.."):/src" --workingdir "/src" "${c}" -- env "HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/${env}" hatch -e "${env}" run pip uninstall --yes "${projname}"
 	;;
     esac
 done

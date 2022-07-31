@@ -71,7 +71,24 @@ jobs:
     - name: run linters
       uses: ./.github/actions/lint
       if: (github.event_name != 'pull_request') && (needs.preflight.outputs.need_image == 'true')
+    - name: build wheel
+      run: hatch build -t wheel
+      shell: bash
+    - name: install project
+      run: hatch run ci.${{ matrix.python }}:pip install dist/*.whl
+      shell: bash
+      env:
+        HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/ci.${{ matrix.python }}
+    - name: install project with systemd
+      run: hatch run ci-systemd.${{ matrix.python }}:pip install dist/*.whl
+      shell: bash
+      env:
+        HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/ci-systemd.${{ matrix.python }}
     - name: run tests
-      run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/ci.${{ matrix.python }} hatch run ci.${{ matrix.python }}:ci
+      run: hatch run ci.${{ matrix.python }}:ci
+      env:
+        HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/ci.${{ matrix.python }}
     - name: run tests with systemd
-      run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/ci-systemd.${{ matrix.python }} hatch run ci-systemd.${{ matrix.python }}:ci
+      run: hatch run ci-systemd.${{ matrix.python }}:ci
+      env:
+        HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/ci-systemd.${{ matrix.python }}

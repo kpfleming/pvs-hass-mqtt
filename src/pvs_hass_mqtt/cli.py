@@ -4,7 +4,7 @@ import os
 import pathlib
 import sys
 
-from .version import __version__
+from . import VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s " + __version__,
+        version="%(prog)s " + VERSION,
         help="display version of this program",
     )
 
@@ -83,6 +83,7 @@ def setup_logging(dest: str, level: int) -> None:
         formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s")
         stdout_handler.setFormatter(formatter)
         stderr_handler.setFormatter(formatter)
+        # include more details in debug output
         debug_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s: %(message)s")
         debug_handler.setFormatter(debug_formatter)
         # only allow INFO records to stdout
@@ -106,7 +107,7 @@ def cli() -> None:
 
     setup_logging(args.log, loglevel)
 
-    print(os.path.basename(sys.argv[0]) + " - version: " + __version__)
+    print(os.path.basename(sys.argv[0]) + " - version: " + VERSION)
 
     if not args.config_file.is_file():
         logger.error("Path provided to --config-file is not a regular file: %s", args.config_file)

@@ -95,9 +95,6 @@ dependencies = [
     "pytest",
 ]
 
-[tool.hatch.envs.ci.overrides]
-env.SKIP_INSTALL.skip-install = { value=true, if = ["1"] }
-
 [[tool.hatch.envs.ci.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11"]
 
@@ -111,9 +108,6 @@ features = [
 dependencies = [
     "pytest",
 ]
-
-[tool.hatch.envs.ci-systemd.overrides]
-env.SKIP_INSTALL.skip-install = { value=true, if = ["1"] }
 
 [[tool.hatch.envs.ci-systemd.matrix]]
 python = ["3.8", "3.9", "3.10", "3.11"]

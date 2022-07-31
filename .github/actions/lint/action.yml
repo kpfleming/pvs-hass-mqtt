@@ -2,22 +2,39 @@ name: "Run linter checks"
 runs:
   using: "composite"
   steps:
-  - name: run black
-    if: success() || failure()
-    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run black --check --diff .
+  - name: build wheel
+    run: hatch build -t wheel
     shell: bash
-  - name: run isort
+  - name: install project
     if: success() || failure()
-    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run isort --check --diff .
+    run: hatch run lint:pip install dist/*.whl
     shell: bash
-  - name: run flake8
-    if: success() || failure()
-    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run flake8
-    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
   - name: run mypy
     if: success() || failure()
-    run: env HATCH_ENV_TYPE_VIRTUAL_PATH=/root/hatch/lint hatch -elint run mypy .
+    run: hatch run lint:mypy --package pvs_hass_mqtt
     shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
+  - name: run black
+    if: success() || failure()
+    run: hatch run lint:black --check --diff .
+    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
+  - name: run isort
+    if: success() || failure()
+    run: hatch run lint:isort --check --diff .
+    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
+  - name: run flake8
+    if: success() || failure()
+    run: hatch run lint:flake8
+    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
   - name: run shellcheck
     if: success() || failure()
     run: shellcheck workflow-support/*.sh
