@@ -11,7 +11,7 @@ lint_deps=(shellcheck)
 proj_deps=(libsystemd0)
 proj_build_deps=(pkg-config libsystemd-dev)
 
-pyversions=(3.8.13 3.9.13 3.10.5 3.11.0b5)
+pyversions=(3.8.13 3.9.13 3.10.6 3.11.0b5)
 
 hatchenvs=(lint ci ci-systemd)
 cimatrix=(py3.8 py3.9 py3.10 py3.11)
