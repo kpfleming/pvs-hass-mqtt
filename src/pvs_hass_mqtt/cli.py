@@ -72,15 +72,23 @@ def setup_logging(dest: str, level: int) -> None:
             logger.error("'systemd' logging requested but not running under systemd")
             exit(2)
 
-        journal_handler = systemd.journal.JournalHandler()
-        journal_handler.setLevel(level)
-        root_logger.addHandler(journal_handler)
+        main_handler = systemd.journal.JournalHandler()
+        main_handler.setLevel(logging.INFO)
+        debug_handler = systemd.journal.JournalHandler()
+        debug_handler.setLevel(logging.DEBUG)
+        # include more details in debug output
+        debug_formatter = logging.Formatter("%(name)s: %(message)s")
+        debug_handler.setFormatter(debug_formatter)
+        # only allow DEBUG records to debug
+        debug_handler.addFilter(lambda r: r.levelno == logging.DEBUG)
+        root_logger.addHandler(debug_handler)
+        root_logger.addHandler(main_handler)
 
     elif dest == "console":
         debug_handler = logging.StreamHandler(stream=sys.stdout)
         debug_handler.setLevel(logging.DEBUG)
         stdout_handler = logging.StreamHandler(stream=sys.stdout)
-        stdout_handler.setLevel(level)
+        stdout_handler.setLevel(logging.INFO)
         stderr_handler = logging.StreamHandler(stream=sys.stderr)
         stderr_handler.setLevel(logging.WARNING)
         formatter = logging.Formatter("%(asctime)s - %(levelname)s: %(message)s")
