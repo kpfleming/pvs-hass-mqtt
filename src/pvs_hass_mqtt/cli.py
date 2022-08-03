@@ -1,15 +1,18 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import os
 import pathlib
 import sys
+from collections.abc import Sequence
 
 from . import VERSION
 
 logger = logging.getLogger(__name__)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Reads data from a SunPower PVS and sends it via MQTT to Home Assistant."
     )
@@ -51,7 +54,7 @@ def parse_args() -> argparse.Namespace:
         help="display version of this program",
     )
 
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def setup_logging(dest: str, level: int) -> None:
