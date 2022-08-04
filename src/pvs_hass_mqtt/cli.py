@@ -134,8 +134,8 @@ def setup_logging(dest: str, level: int) -> None:
         root_logger.addHandler(stderr_handler)
 
 
-def cli() -> None:
-    args = parse_args()
+def cli(argv: Sequence[str] | None = None, test_only: bool = False) -> None:
+    args = parse_args(argv)
 
     if args.verbose >= 2:
         loglevel = logging.DEBUG
