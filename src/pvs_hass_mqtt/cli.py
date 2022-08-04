@@ -6,10 +6,31 @@ import os
 import pathlib
 import sys
 from collections.abc import Sequence
+from typing import Any
 
 from . import VERSION
 
 logger = logging.getLogger(__name__)
+
+
+class UniqueStore(argparse.Action):
+    """argparse action to restrict options to appearing only once."""
+
+    def __init__(self, option_strings: Sequence[str], dest: str, **kwargs) -> None:
+        self.already_seen = False
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: str | Sequence[Any] | None,
+        option_string: str = None,
+    ) -> None:
+        if self.already_seen and option_string:
+            parser.error(option_string + " cannot be specified more than once.")
+        setattr(namespace, self.dest, values)
+        self.already_seen = True
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -19,6 +40,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "-c",
         "--config-file",
+        action=UniqueStore,
         default="pvs-hass-mqtt.yml",
         type=pathlib.Path,
         help="provide path to configuration file (default: %(default)s)",
@@ -26,6 +48,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "-d",
         "--data-dir",
+        action=UniqueStore,
         default="/var/lib/pvs-hass-mqtt",
         type=pathlib.Path,
         help="provide path to directory for data storage (default: %(default)s)",
@@ -33,6 +56,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "-l",
         "--log",
+        action=UniqueStore,
         default="console",
         choices=("console", "systemd"),
         help="specify the destination for logging output (default: %(default)s)",
