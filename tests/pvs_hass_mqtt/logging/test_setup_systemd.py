@@ -8,7 +8,7 @@ from attrs import astuple, define
 from mock import MagicMock
 from pytest_mock import MockerFixture
 
-from pvs_hass_mqtt.cli import setup_logging
+from pvs_hass_mqtt.cli import SystemdLoggingSetupError, setup_logging
 
 
 @define(kw_only=True)
@@ -33,25 +33,21 @@ def mock_handlers(mocker: MockerFixture) -> Iterator[JournalHandlers]:
 
 
 @pytest.mark.logging()
-def test_systemd_not_available(mocker: MockerFixture, capsys: pytest.CaptureFixture[str]) -> None:
+def test_systemd_not_available(mocker: MockerFixture) -> None:
     """Ensure that systemd logging setup fails when systemd package is not available."""
     mocker.patch.dict("sys.modules", {"systemd": None})
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemdLoggingSetupError) as excinfo:
         setup_logging("systemd", logging.WARNING)
-    captured = capsys.readouterr()
-    assert "not installed" in captured.err
+    assert "not installed" in str(excinfo.value)
 
 
 @pytest.mark.logging()
-def test_systemd_not_in_use(
-    mock_handlers: JournalHandlers, capsys: pytest.CaptureFixture[str], mocker: MockerFixture
-) -> None:
+def test_systemd_not_in_use(mock_handlers: JournalHandlers, mocker: MockerFixture) -> None:
     """Ensure that systemd logging setup fails when systemd is not in use."""
     mocker.patch.dict("os.environ", clear=True)
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemdLoggingSetupError) as excinfo:
         setup_logging("systemd", logging.WARNING)
-    captured = capsys.readouterr()
-    assert "not running" in captured.err
+    assert "not running" in str(excinfo.value)
 
 
 @pytest.mark.logging()

@@ -81,6 +81,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+class SystemdLoggingSetupError(Exception):
+    pass
+
+
 def setup_logging(dest: str, level: int) -> None:
     root_logger = logging.root
     root_logger.setLevel(level)
@@ -89,12 +93,12 @@ def setup_logging(dest: str, level: int) -> None:
         try:
             import systemd  # type: ignore
         except ImportError:
-            logger.error("'systemd' logging requested but not installed")
-            exit(2)
+            raise SystemdLoggingSetupError("'systemd' logging requested but not installed")
 
         if "JOURNAL_STREAM" not in os.environ:
-            logger.error("'systemd' logging requested but not running under systemd")
-            exit(2)
+            raise SystemdLoggingSetupError(
+                "'systemd' logging requested but not running under systemd"
+            )
 
         main_handler = systemd.journal.JournalHandler()
         main_handler.setLevel(logging.INFO)
@@ -140,7 +144,11 @@ def cli() -> None:
     else:
         loglevel = logging.WARN
 
-    setup_logging(args.log, loglevel)
+    try:
+        setup_logging(args.log, loglevel)
+    except SystemdLoggingSetupError as exc:
+        logger.error(str(exc))
+        exit(2)
 
     print(os.path.basename(sys.argv[0]) + " - version: " + VERSION)
 
