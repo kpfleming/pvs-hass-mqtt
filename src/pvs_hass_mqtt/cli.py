@@ -154,8 +154,8 @@ def cli(argv: Sequence[str] | None = None, *, test_only: bool = False) -> None:
 
     if not args.config_file.is_file():
         logger.error("Path provided to --config-file is not a regular file: %s", args.config_file)
-        exit(2)
+        exit(3)
 
     if not args.data_dir.is_dir():
         logger.error("Path provided to --data-dir is not a directory: %s", args.data_dir)
-        exit(2)
+        exit(4)
