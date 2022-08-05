@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class UniqueStore(argparse.Action):
     """argparse action to restrict options to appearing only once."""
 
-    def __init__(self, option_strings: Sequence[str], dest: str, **kwargs) -> None:
+    def __init__(self, option_strings: Sequence[str], dest: str, **kwargs: Any) -> None:
         self.already_seen = False
         super().__init__(option_strings, dest, **kwargs)
 
