@@ -21,9 +21,12 @@ class JournalHandlers:
 def mock_handlers(mocker: MockerFixture) -> Iterator[JournalHandlers]:
     """Mock the 'systemd' package and the JOURNAL_STREAM environment variable."""
     mocked_systemd = mocker.MagicMock()
+    mocked_systemd_journal = mocker.MagicMock()
     handlers = JournalHandlers(main=mocker.MagicMock(), debug=mocker.MagicMock())
-    mocked_systemd.journal.JournalHandler.side_effect = astuple(handlers)
+    mocked_systemd_journal.JournalHandler.side_effect = astuple(handlers)
+    mocked_systemd.journal = mocked_systemd_journal
     mocker.patch.dict("sys.modules", {"systemd": mocked_systemd})
+    mocker.patch.dict("sys.modules", {"systemd.journal": mocked_systemd_journal})
     mocker.patch.dict("os.environ", {"JOURNAL_STREAM": "set"})
     yield handlers
     # add a no-op as 'teardown', since if 'return' was used

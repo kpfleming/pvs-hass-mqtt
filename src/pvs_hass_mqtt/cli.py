@@ -91,7 +91,7 @@ def setup_logging(dest: str, level: int) -> None:
 
     if dest == "systemd":
         try:
-            import systemd  # type: ignore
+            import systemd.journal  # type: ignore
         except ImportError:
             raise SystemdLoggingSetupError("'systemd' logging requested but not installed")
 
