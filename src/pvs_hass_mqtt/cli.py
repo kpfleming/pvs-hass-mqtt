@@ -25,7 +25,7 @@ class UniqueStore(argparse.Action):
         parser: argparse.ArgumentParser,
         namespace: argparse.Namespace,
         values: str | Sequence[Any] | None,
-        option_string: str = None,
+        option_string: str | None = None,
     ) -> None:
         if self.already_seen and option_string:
             parser.error(option_string + " cannot be specified more than once.")
