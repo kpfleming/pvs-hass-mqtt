@@ -29,6 +29,7 @@ def minimal_config(tmp_path: pathlib.Path) -> MinimalConfig:
     )
 
 
+@pytest.mark.logging()
 @pytest.mark.parametrize(
     ("args", "loglevel"),
     [
@@ -45,6 +46,7 @@ def test_verbose_to_loglevel(
     assert logging.root.getEffectiveLevel() == loglevel
 
 
+@pytest.mark.logging()
 def test_systemd_logging_not_possible(mocker: MockerFixture, minimal_config: MinimalConfig) -> None:
     mocker.patch.dict("os.environ", clear=True)
     with pytest.raises(SystemExit) as excinfo:
@@ -55,6 +57,7 @@ def test_systemd_logging_not_possible(mocker: MockerFixture, minimal_config: Min
     assert excinfo.value.code == 2
 
 
+@pytest.mark.logging()
 def test_missing_config_file(resettable_logging: ModuleType, minimal_config: MinimalConfig) -> None:
     """Ensure that a missing configuration file causes the entrypoint to exit."""
     with pytest.raises(SystemExit) as excinfo:
@@ -70,6 +73,7 @@ def test_missing_config_file(resettable_logging: ModuleType, minimal_config: Min
     assert excinfo.value.code == 3
 
 
+@pytest.mark.logging()
 def test_missing_data_dir(resettable_logging: ModuleType, minimal_config: MinimalConfig) -> None:
     """Ensure that a missing data directory causes the entrypoint to exit."""
     with pytest.raises(SystemExit) as excinfo:
