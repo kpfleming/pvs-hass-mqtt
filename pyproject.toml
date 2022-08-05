@@ -158,7 +158,10 @@ xfail_strict = true
 testpaths = [
     "tests",
 ]
-addopts = "--strict-markers"
+addopts = [
+    "-ra",
+    "--strict-markers",
+]
 markers = [
-    "logging",
+    "logging: marks tests that manipulate the root logger",
 ]
