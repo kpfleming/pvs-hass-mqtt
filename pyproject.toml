@@ -90,7 +90,8 @@ lint = [
      "black .",
      "isort .",
      "flake8",
-     "mypy .",
+     "mypy --package pvs_hass_mqtt",
+     "mypy tests",
      "shellcheck workflow-support/*.sh",
 ]
 
@@ -128,6 +129,10 @@ target-version = ["py310"]
 [tool.isort]
 profile = "black"
 line_length = 100
+
+[tool.mypy]
+namespace_packages = true
+explicit_package_bases = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"

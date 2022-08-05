@@ -11,9 +11,15 @@ runs:
     shell: bash
     env:
       HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
-  - name: run mypy
+  - name: run mypy (application)
     if: success() || failure()
     run: hatch run lint:mypy --package pvs_hass_mqtt
+    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
+  - name: run mypy (tests)
+    if: success() || failure()
+    run: hatch run lint:mypy tests
     shell: bash
     env:
       HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
