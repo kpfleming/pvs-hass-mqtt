@@ -1,4 +1,5 @@
 *~
+.coverage
 dist
 src/pvs_hass_mqtt/version.py
 pvs-hass-mqtt.yml
