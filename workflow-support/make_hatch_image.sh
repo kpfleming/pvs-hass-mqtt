@@ -8,7 +8,7 @@ scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
 py_deps=(build-essential libreadline-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev)
 lint_deps=(shellcheck)
-proj_deps=(libsystemd0)
+proj_deps=(libsystemd0 libsqlite3-0)
 proj_build_deps=(pkg-config libsystemd-dev)
 
 pyversions=(3.8.13 3.9.13 3.10.6 3.11.0b5)
