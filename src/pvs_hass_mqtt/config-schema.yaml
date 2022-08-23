@@ -1,2 +1,17 @@
-name:
-  type: string
+pvs:
+  type: dict
+  allow_unknown: True
+  minlength: 1
+  required: True
+  keysrules:
+    type: string
+  valuesrules:
+    type: dict
+    schema:
+      url:
+        type: string
+        required: True
+      poll_interval:
+        type: integer
+        default: 60
+        min: 30

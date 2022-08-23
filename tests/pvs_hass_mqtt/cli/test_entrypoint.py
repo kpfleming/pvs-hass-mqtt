@@ -20,6 +20,10 @@ class MinimalConfig:
 
 @pytest.fixture()
 def minimal_config(tmp_path: pathlib.Path) -> MinimalConfig:
+    """
+    Create a MinimalConfig object which contains a path to an empty
+    configuration file and a path to a writable data directory.
+    """
     config_file = tmp_path / "config.yml"
     config_file.write_text("")
     return MinimalConfig(
@@ -48,6 +52,7 @@ def test_verbose_to_loglevel(
 
 @pytest.mark.logging()
 def test_systemd_logging_not_possible(mocker: MockerFixture, minimal_config: MinimalConfig) -> None:
+    """Ensure that asking for systemd-based logging fails when it is not available."""
     mocker.patch.dict("os.environ", clear=True)
     with pytest.raises(SystemExit) as excinfo:
         cli(
