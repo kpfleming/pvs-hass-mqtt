@@ -15,3 +15,28 @@ pvs:
         type: integer
         default: 60
         min: 30
+
+array:
+  type: dict
+  allow_unknown: True
+  minlength: 1
+  required: True
+  keysrules:
+    type: string
+  valuesrules:
+    type: dict
+    schema:
+      panel:
+        type: list
+        schema:
+          type: string
+        minlength: 1
+        required: True
+      azimuth:
+        type: float
+        min: 0
+        max: 360
+      tilt:
+        type: float
+        min: 0
+        max: 90
