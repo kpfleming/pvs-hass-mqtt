@@ -11,7 +11,7 @@ from pytest_mock import MockerFixture
 from pvs_hass_mqtt.cli import cli
 
 
-@define
+@define(kw_only=True)
 class MinimalConfig:
     config_file: pathlib.Path
     data_dir: pathlib.Path
