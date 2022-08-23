@@ -12,6 +12,6 @@ This repo contains the `pvs-hass-mqtt` tool, an application to provide
 integration between a SunPower Photovoltaic Supervisor (PVS, version 5
 or 6) and Home Assistant, using MQTT for communication.
 
-Open Source software: [GNU General Public License v3.0 or later](https://spdx.org/licenses/GPL-3.0-or-later.html))
+Open Source software: [GNU General Public License v3.0 or later](https://spdx.org/licenses/GPL-3.0-or-later.html)
 
 ## &nbsp;
