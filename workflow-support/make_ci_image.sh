@@ -21,10 +21,7 @@ buildcmd() {
 
 buildcmd apt update --quiet=2
 buildcmd apt install --yes --quiet=2 git
-
-buildcmd apt install --yes --quiet=2 "${lint_deps[@]}"
-
-buildcmd apt install --yes --quiet=2 "${proj_deps[@]}" "${proj_build_deps[@]}"
+buildcmd apt install --yes --quiet=2 "${lint_deps[@]}" "${proj_deps[@]}" "${proj_build_deps[@]}"
 
 for env in "${hatchenvs[@]}"; do
     # this looks weird... but it causes Hatch to create the env,
