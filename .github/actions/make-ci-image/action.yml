@@ -1,4 +1,4 @@
-name: "Build Hatch image"
+name: "Build CI image"
 inputs:
   image_name:
     required: true
@@ -14,10 +14,10 @@ runs:
     uses: actions/cache@v3
     with:
       path: pyproject.toml
-      key: ${{ github.ref_name }}-${{ hashfiles('pyproject.toml', 'workflow-support/make_hatch_image.sh', '.github/actions/make-hatch-image/action.yml') }}
+      key: ${{ github.ref_name }}-${{ hashfiles('pyproject.toml', 'workflow-support/make_ci_image.sh', '.github/actions/make-ci-image/action.yml') }}
   - name: build image
     if: (steps.imagefiles.outputs.cache-hit != 'true') || (github.event_name == 'schedule')
-    run: workflow-support/make_hatch_image.sh
+    run: workflow-support/make_ci_image.sh
     shell: bash
     env:
       image_name: ${{ inputs.image_name }}

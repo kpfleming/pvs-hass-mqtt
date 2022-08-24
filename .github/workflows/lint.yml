@@ -12,7 +12,7 @@ on:
     - '.github/actions/lint/action.yml'
 
 env:
-  registry_base: 'quay.io/phm-test-images'
+  registry_base: 'quay.io/km6g-ci-images'
 
 jobs:
   preflight:
@@ -31,7 +31,7 @@ jobs:
       if: github.event_name != 'pull_request'
       with:
         ref: ${{ github.sha }}
-        check-name: image-hatch
+        check-name: ci-image
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
     - name: ensure image has been created
@@ -39,7 +39,7 @@ jobs:
       if: github.event_name == 'pull_request'
       with:
         ref: ${{ github.event.pull_request.head.sha }}
-        check-name: image-hatch
+        check-name: ci-image
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
   lint:
@@ -47,7 +47,7 @@ jobs:
     needs:
     - preflight
     container:
-      image: docker://${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
+      image: docker://${{ needs.preflight.outputs.registry_base }}/pvs-hass-mqtt:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/lint

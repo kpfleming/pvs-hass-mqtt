@@ -12,4 +12,4 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: delete image tag
-      run: 'curl -s -X DELETE -H "Authorization: Bearer ${{ secrets.QUAY_API_TOKEN }}" https://quay.io/api/v1/repository/phm-test-images/hatch/tag/pr${{ github.event.pull_request.number }}'
+      run: 'curl -s -X DELETE -H "Authorization: Bearer ${{ secrets.QUAY_API_TOKEN }}" https://quay.io/api/v1/repository/km6g-ci-images/pvs-hass-mqtt/tag/pr${{ github.event.pull_request.number }}'

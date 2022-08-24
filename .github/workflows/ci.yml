@@ -7,10 +7,10 @@ on:
     paths:
     - 'pyproject.toml'
     - 'src/**.py'
-    - 'workflow-support/make_*_image.sh'
+    - 'workflow-support/make_ci_image.sh'
     - '.github/workflows/ci.yml'
     - '.github/actions/preflight/action.yml'
-    - '.github/actions/make-hatch-image/action.yml'
+    - '.github/actions/make-ci-image/action.yml'
   pull_request:
     types:
     - opened
@@ -21,15 +21,15 @@ on:
     paths:
     - 'pyproject.toml'
     - 'src/**.py'
-    - 'workflow-support/make_*_image.sh'
+    - 'workflow-support/make_ci_image.sh'
     - '.github/workflows/ci.yml'
     - '.github/actions/preflight/action.yml'
-    - '.github/actions/make-hatch-image/action.yml'
+    - '.github/actions/make-ci-image/action.yml'
   schedule:
     - cron: "35 4 * * 6"
 
 env:
-  registry_base: 'quay.io/phm-test-images'
+  registry_base: 'quay.io/km6g-ci-images'
 
 jobs:
   preflight:
@@ -43,29 +43,29 @@ jobs:
     - uses: actions/checkout@v3
     - id: preflight
       uses: ./.github/actions/preflight
-  image-hatch:
+  ci-image:
     runs-on: ubuntu-20.04
     needs:
     - preflight
     steps:
     - uses: actions/checkout@v3
-    - uses: ./.github/actions/make-hatch-image
+    - uses: ./.github/actions/make-ci-image
       if: needs.preflight.outputs.need_image == 'true'
       with:
-        image_name: ${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
+        image_name: ${{ needs.preflight.outputs.registry_base }}/pvs-hass-mqtt:${{ needs.preflight.outputs.image_tag }}
         quay_username: ${{ secrets.QUAY_BOT_NAME }}
         quay_password: ${{ secrets.QUAY_BOT_PASSWORD }}
   test:
     runs-on: ubuntu-20.04
     needs:
     - preflight
-    - image-hatch
+    - ci-image
     strategy:
       matrix:
         python: [py3.8, py3.9, py3.10, py3.11]
       fail-fast: false
     container:
-      image: docker://${{ needs.preflight.outputs.registry_base }}/hatch:${{ needs.preflight.outputs.image_tag }}
+      image: docker://${{ needs.preflight.outputs.registry_base }}/pvs-hass-mqtt:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
     - name: run linters
