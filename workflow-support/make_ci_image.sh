@@ -13,7 +13,7 @@ proj_build_deps=(build-essential libc6-dev pkg-config libsystemd-dev)
 hatchenvs=(lint ci ci-systemd)
 cimatrix=(py3.8 py3.9 py3.10 py3.11)
 
-c=$(buildah from quay.io/km6g-ci-images/python:main)
+c=$(buildah from quay.io/km6g-ci-images/python:bullseye-main)
 
 buildcmd() {
     buildah run --network host "${c}" -- "$@"
