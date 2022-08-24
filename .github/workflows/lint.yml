@@ -12,7 +12,7 @@ on:
     - '.github/actions/lint/action.yml'
 
 env:
-  registry_base: 'quay.io/km6g-ci-images'
+  image_base: 'quay.io/km6g-ci-images/pvs-hass-mqtt'
 
 jobs:
   preflight:
@@ -20,8 +20,8 @@ jobs:
     outputs:
       need_image: ${{ steps.preflight.outputs.need_image }}
       image_tag: ${{ steps.preflight.outputs.image_tag }}
-      # workaround to make registry_base available in jobs
-      registry_base: ${{ env.registry_base }}
+      # workaround to make image_base available in jobs
+      image_base: ${{ env.image_base }}
     steps:
     - uses: actions/checkout@v3
     - id: preflight
@@ -47,7 +47,7 @@ jobs:
     needs:
     - preflight
     container:
-      image: docker://${{ needs.preflight.outputs.registry_base }}/pvs-hass-mqtt:${{ needs.preflight.outputs.image_tag }}
+      image: docker://${{ needs.preflight.outputs.image_base }}:${{ needs.preflight.outputs.image_tag }}
     steps:
     - uses: actions/checkout@v3
     - uses: ./.github/actions/lint
