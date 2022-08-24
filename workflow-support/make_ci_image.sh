@@ -8,7 +8,7 @@ scriptdir=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
 lint_deps=(shellcheck)
 proj_deps=(libsystemd0 libsqlite3-0)
-proj_build_deps=(pkg-config libsystemd-dev)
+proj_build_deps=(build-essential libc6-dev pkg-config libsystemd-dev)
 
 hatchenvs=(lint ci ci-systemd)
 cimatrix=(py3.8 py3.9 py3.10 py3.11)
