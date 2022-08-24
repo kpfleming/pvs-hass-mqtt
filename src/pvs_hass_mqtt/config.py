@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @define(kw_only=True)
 class PVS:
     name: str
-    URL: str
+    url: str
 
 
 @define(kw_only=True)
@@ -28,15 +28,15 @@ class Panel:
 @define(kw_only=True)
 class Array:
     name: str
-    azimuth: float
-    tilt: float
+    azimuth: float | None
+    tilt: float | None
     panel: list[Panel] = field(factory=list)
 
 
 class ConfigValidationError(Exception):
-    def __init__(self, message: str, errors: Mapping[str, Any]) -> None:
+    def __init__(self, message: str, errors: Mapping[str, Any] | None) -> None:
         self.message: str = message
-        self.errors: Mapping[str, Any] = errors
+        self.errors: Mapping[str, Any] | None = errors
 
     def __str__(self) -> str:
         return self.message
@@ -68,16 +68,32 @@ class Config:
     array: list[Array] = field(factory=list)
 
     @classmethod
-    def _from_dict(cls, config: Mapping[Any, Any]) -> Config:
+    def _from_dict(cls, source: Mapping[Any, Any]) -> Config:
         schema = yaml.safe_load(
             importlib.resources.read_text(sys.modules["pvs_hass_mqtt"], "config-schema.yaml")
         )
 
         v = Validator(schema)
-        if not v.validate(config):
+        if not v.validate(source):
             raise ConfigValidationError(prettify_errors(v.errors), v.errors)
 
-        return Config()
+        config = Config()
+        panel_serials: set[str] = set()
+
+        for name, pvs in v.document["pvs"].items():
+            config.pvs.append(PVS(name=name, url=pvs["url"]))
+
+        for name, array in v.document["array"].items():
+            ary = Array(name=name, azimuth=array.get("azimuth", None), tilt=array.get("tilt", None))
+            config.array.append(ary)
+            for serial in array["panel"]:
+                if serial in panel_serials:
+                    raise ConfigValidationError(f"Panel '{serial}' defined more than once", None)
+
+                ary.panel.append(Panel(serial=serial))
+                panel_serials.add(serial)
+
+        return config
 
     @classmethod
     def from_file(cls, file: pathlib.Path) -> Config:
