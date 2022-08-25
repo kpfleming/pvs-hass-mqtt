@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 class PVS:
     name: str
     url: str
+    poll_interval: int
 
 
 @define(kw_only=True)
@@ -81,7 +82,7 @@ class Config:
         panel_serials: set[str] = set()
 
         for name, pvs in v.document["pvs"].items():
-            config.pvs.append(PVS(name=name, url=pvs["url"]))
+            config.pvs.append(PVS(name=name, url=pvs["url"], poll_interval=pvs["poll_interval"]))
 
         for name, array in v.document["array"].items():
             ary = Array(name=name, azimuth=array.get("azimuth", None), tilt=array.get("tilt", None))
