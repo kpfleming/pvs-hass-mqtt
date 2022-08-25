@@ -19,6 +19,7 @@ class TestPVS:
             Config._from_dict({"array": {"a": {"panel": ["1"]}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "pvs" in errors
         assert "required field" in errors["pvs"]
 
@@ -28,6 +29,7 @@ class TestPVS:
             Config._from_dict({"pvs": {}, "array": {"a": {"panel": ["1"]}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "pvs" in errors
         assert "min length is 1" in errors["pvs"]
 
@@ -45,6 +47,7 @@ class TestPVS:
             Config._from_dict({"pvs": {key: {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "pvs" in errors
         assert key in errors["pvs"][0]
         assert "must be of string type" in errors["pvs"][0][key]
@@ -57,6 +60,7 @@ class TestPVS:
             )
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "pvs" in errors
         assert "url" in errors["pvs"][0]["first"][0]
         assert "required field" in errors["pvs"][0]["first"][0]["url"]
@@ -80,6 +84,7 @@ class TestPVS:
             )
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "pvs" in errors
         assert "poll_interval" in errors["pvs"][0]["first"][0]
         assert error in errors["pvs"][0]["first"][0]["poll_interval"][0]
@@ -101,6 +106,7 @@ class TestArray:
             Config._from_dict({"pvs": {"first": {"url": "foo"}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "required field" in errors["array"]
 
@@ -110,6 +116,7 @@ class TestArray:
             Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "min length is 1" in errors["array"]
 
@@ -127,6 +134,7 @@ class TestArray:
             Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {key: {"panel": ["1"]}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert key in errors["array"][0]
         assert "must be of string type" in errors["array"][0][key]
@@ -137,6 +145,7 @@ class TestArray:
             Config._from_dict({"pvs": {"first": {"poll_interval": 60}}, "array": {"a": {}}})
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "panel" in errors["array"][0]["a"][0]
         assert "required field" in errors["array"][0]["a"][0]["panel"]
@@ -166,6 +175,7 @@ class TestArray:
             )
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "panel" in errors["array"][0]["a"][0]
         assert "must be of string type" in errors["array"][0]["a"][0]["panel"][0][0]
@@ -198,6 +208,7 @@ class TestArray:
             )
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "azimuth" in errors["array"][0]["a"][0]
         assert error in errors["array"][0]["a"][0]["azimuth"][0]
@@ -230,6 +241,7 @@ class TestArray:
             )
 
         errors = excinfo.value.errors
+        assert errors is not None
         assert "array" in errors
         assert "tilt" in errors["array"][0]["a"][0]
         assert error in errors["array"][0]["a"][0]["tilt"][0]
