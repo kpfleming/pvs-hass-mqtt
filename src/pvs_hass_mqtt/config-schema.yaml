@@ -63,7 +63,7 @@ mqtt:
     keep_alive:
       type: integer
       default: 30
-      min: 0
+      min: 1
     qos:
       type: integer
       min: 0

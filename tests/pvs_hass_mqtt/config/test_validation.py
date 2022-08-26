@@ -288,3 +288,164 @@ class TestArray:
         assert "array" in errors
         assert "tilt" in errors["array"][0]["a"][0]
         assert error in errors["array"][0]["a"][0]["tilt"][0]
+
+
+class TestMQTT:
+    def test_missing(self) -> None:
+        """Ensure that a configuration missing the 'mqtt' mapping is not accepted."""
+        with pytest.raises(ConfigValidationError) as excinfo:
+            Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
+
+        errors = excinfo.value.errors
+        assert errors is not None
+        assert "mqtt" in errors
+        assert "required field" in errors["mqtt"]
+
+    def test_empty(self) -> None:
+        """Ensure that a missing 'broker' field in the 'mqtt' mapping is not accepted."""
+        with pytest.raises(ConfigValidationError) as excinfo:
+            Config._from_dict(
+                {"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}, "mqtt": {}}
+            )
+
+        errors = excinfo.value.errors
+        assert errors is not None
+        assert "mqtt" in errors
+        assert "required field" in errors["mqtt"][0]["broker"][0]
+
+    def test_port(self) -> None:
+        """Ensure that a 'port' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "port": 2000},
+            }
+        )
+
+    @pytest.mark.parametrize(
+        ("value", "error"),
+        [
+            (0, "min value"),
+            (12345678, "max value"),
+            (1.2, "integer type"),
+            ("abc", "integer type"),
+        ],
+    )
+    def test_invalid_port(self, value: Any, error: str) -> None:
+        """Ensure that invalid values for the 'port' field in a 'mqtt' mapping entry are not accepted."""
+        with pytest.raises(ConfigValidationError) as excinfo:
+            Config._from_dict(
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz", "port": value},
+                }
+            )
+
+        errors = excinfo.value.errors
+        assert errors is not None
+        assert "mqtt" in errors
+        assert "port" in errors["mqtt"][0]
+        assert error in errors["mqtt"][0]["port"][0]
+
+    def test_username(self) -> None:
+        """Ensure that a 'username' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "username": "blah"},
+            }
+        )
+
+    def test_password(self) -> None:
+        """Ensure that a 'password' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "password": "blah"},
+            }
+        )
+
+    def test_client_id(self) -> None:
+        """Ensure that a 'client_id' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "client_id": "blah"},
+            }
+        )
+
+    def test_keep_alive(self) -> None:
+        """Ensure that a 'keep_alive' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "keep_alive": 42},
+            }
+        )
+
+    @pytest.mark.parametrize(
+        ("value", "error"),
+        [
+            (0, "min value"),
+            (1.2, "integer type"),
+            ("abc", "integer type"),
+        ],
+    )
+    def test_invalid_keep_alive(self, value: Any, error: str) -> None:
+        """Ensure that invalid values for the 'keep_alive' field in a 'mqtt' mapping entry are not accepted."""
+        with pytest.raises(ConfigValidationError) as excinfo:
+            Config._from_dict(
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz", "keep_alive": value},
+                }
+            )
+
+        errors = excinfo.value.errors
+        assert errors is not None
+        assert "mqtt" in errors
+        assert "keep_alive" in errors["mqtt"][0]
+        assert error in errors["mqtt"][0]["keep_alive"][0]
+
+    def test_qos(self) -> None:
+        """Ensure that a 'qos' field in the 'mqtt' mapping is accepted."""
+        Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz", "qos": 1},
+            }
+        )
+
+    @pytest.mark.parametrize(
+        ("value", "error"),
+        [
+            (-1, "min value"),
+            (3, "max value"),
+            (1.2, "integer type"),
+            ("abc", "integer type"),
+        ],
+    )
+    def test_invalid_qos(self, value: Any, error: str) -> None:
+        """Ensure that invalid values for the 'qos' field in a 'mqtt' mapping entry are not accepted."""
+        with pytest.raises(ConfigValidationError) as excinfo:
+            Config._from_dict(
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz", "qos": value},
+                }
+            )
+
+        errors = excinfo.value.errors
+        assert errors is not None
+        assert "mqtt" in errors
+        assert "qos" in errors["mqtt"][0]
+        assert error in errors["mqtt"][0]["qos"][0]

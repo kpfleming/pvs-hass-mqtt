@@ -20,7 +20,7 @@ class MinimalConfig:
 @pytest.fixture()
 def minimal_config(tmp_path: pathlib.Path) -> MinimalConfig:
     """
-    Create a MinimalConfig object which contains a path to an empty
+    Create a MinimalConfig object which contains a path to a minimal
     configuration file and a path to a writable data directory.
     """
     config_file = tmp_path / "config.yml"
