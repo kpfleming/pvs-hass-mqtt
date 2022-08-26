@@ -11,27 +11,11 @@ import yaml
 from attrs import define, field
 from cerberus import Validator  # type: ignore
 
+from .array import Array
+from .panel import Panel
+from .pvs import PVS
+
 logger = logging.getLogger(__name__)
-
-
-@define(kw_only=True)
-class PVS:
-    name: str
-    url: str
-    poll_interval: int
-
-
-@define(kw_only=True)
-class Panel:
-    serial: str
-
-
-@define(kw_only=True)
-class Array:
-    name: str
-    azimuth: float | None
-    tilt: float | None
-    panel: list[Panel] = field(factory=list)
 
 
 class ConfigValidationError(Exception):
