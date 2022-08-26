@@ -50,7 +50,7 @@ class TestPVS:
         )
         assert config.pvs[0].poll_interval == 60
 
-    def test_default_interval(self) -> None:
+    def test_poll_interval(self) -> None:
         """Ensure that the specified poll interval appears in the result."""
         config = Config._from_dict(
             {
@@ -115,3 +115,115 @@ class TestPanel:
             )
 
         assert excinfo.value.message == "Panel 'abc' defined more than once"
+
+
+class TestMQTT:
+    def test_broker(self) -> None:
+        """Ensure that the specified broker appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
+            }
+        )
+        assert config.mqtt.broker == "baz"
+
+    def test_default_port(self) -> None:
+        """Ensure that the default port number appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
+            }
+        )
+        assert config.mqtt.port == 1883
+
+    def test_port(self) -> None:
+        """Ensure that the specified port number appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "port": 1337},
+            }
+        )
+        assert config.mqtt.port == 1337
+
+    def test_username(self) -> None:
+        """Ensure that the specified username appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "username": "flibber"},
+            }
+        )
+        assert config.mqtt.username == "flibber"
+
+    def test_password(self) -> None:
+        """Ensure that the specified password appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "password": "flibber"},
+            }
+        )
+        assert config.mqtt.password == "flibber"
+
+    def test_client_id(self) -> None:
+        """Ensure that the specified client_id appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "client_id": "flibber"},
+            }
+        )
+        assert config.mqtt.client_id == "flibber"
+
+    def test_default_keep_alive(self) -> None:
+        """Ensure that the default keep_alive appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
+            }
+        )
+        assert config.mqtt.keep_alive == 30
+
+    def test_keep_alive(self) -> None:
+        """Ensure that the specified keep_alive appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "keep_alive": 90},
+            }
+        )
+        assert config.mqtt.keep_alive == 90
+
+    def test_default_qos(self) -> None:
+        """Ensure that the default qos appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
+            }
+        )
+        assert config.mqtt.qos == 0
+
+    def test_qos(self) -> None:
+        """Ensure that the specified qos appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz", "qos": 2},
+            }
+        )
+        assert config.mqtt.qos == 2

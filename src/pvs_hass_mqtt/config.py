@@ -8,10 +8,11 @@ from collections.abc import Mapping
 from typing import Any
 
 import yaml
-from attrs import define, field
+from attrs import define
 from cerberus import Validator  # type: ignore
 
 from .array import Array
+from .mqtt import MQTT
 from .panel import Panel
 from .pvs import PVS
 
@@ -49,8 +50,9 @@ def prettify_errors(errors: Mapping[str, Any], indent: int = 0) -> str:
 
 @define(kw_only=True)
 class Config:
-    pvs: list[PVS] = field(factory=list)
-    array: list[Array] = field(factory=list)
+    pvs: list[PVS]
+    array: list[Array]
+    mqtt: MQTT
 
     @classmethod
     def _from_dict(cls, source: Mapping[Any, Any]) -> Config:
@@ -62,15 +64,16 @@ class Config:
         if not v.validate(source):
             raise ConfigValidationError(prettify_errors(v.errors), v.errors)
 
-        config = Config()
+        _pvs: list[PVS] = []
+        _array: list[Array] = []
         panel_serials: set[str] = set()
 
         for name, pvs in v.document["pvs"].items():
-            config.pvs.append(PVS(name=name, url=pvs["url"], poll_interval=pvs["poll_interval"]))
+            _pvs.append(PVS(name=name, url=pvs["url"], poll_interval=pvs["poll_interval"]))
 
         for name, array in v.document["array"].items():
             ary = Array(name=name, azimuth=array.get("azimuth", None), tilt=array.get("tilt", None))
-            config.array.append(ary)
+            _array.append(ary)
             for serial in array["panel"]:
                 if serial in panel_serials:
                     raise ConfigValidationError(f"Panel '{serial}' defined more than once", None)
@@ -78,7 +81,17 @@ class Config:
                 ary.panel.append(Panel(serial=serial))
                 panel_serials.add(serial)
 
-        return config
+        _mqtt = MQTT(
+            broker=v.document["mqtt"]["broker"],
+            port=v.document["mqtt"]["port"],
+            username=v.document["mqtt"].get("username", None),
+            password=v.document["mqtt"].get("password", None),
+            client_id=v.document["mqtt"].get("client_id", None),
+            keep_alive=v.document["mqtt"]["keep_alive"],
+            qos=v.document["mqtt"]["qos"],
+        )
+
+        return Config(pvs=_pvs, array=_array, mqtt=_mqtt)
 
     @classmethod
     def from_file(cls, file: pathlib.Path) -> Config:
