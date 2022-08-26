@@ -9,14 +9,20 @@ from pvs_hass_mqtt.config import Config, ConfigValidationError
 
 def test_minimal_config() -> None:
     """Ensure that a minimal configuration is accepted."""
-    Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
+    Config._from_dict(
+        {
+            "pvs": {"first": {"url": "foo"}},
+            "array": {"a": {"panel": ["1"]}},
+            "mqtt": {"broker": "baz"},
+        }
+    )
 
 
 class TestPVS:
     def test_missing(self) -> None:
         """Ensure that a configuration missing the 'pvs' mapping is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"array": {"a": {"panel": ["1"]}}})
+            Config._from_dict({"array": {"a": {"panel": ["1"]}}, "mqtt": {"broker": "baz"}})
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -26,7 +32,9 @@ class TestPVS:
     def test_empty(self) -> None:
         """Ensure that a configuration with an empty 'pvs' mapping is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"pvs": {}, "array": {"a": {"panel": ["1"]}}})
+            Config._from_dict(
+                {"pvs": {}, "array": {"a": {"panel": ["1"]}}, "mqtt": {"broker": "baz"}}
+            )
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -44,7 +52,13 @@ class TestPVS:
     def test_invalid_key(self, key: Any) -> None:
         """Ensure that an invalid key in the 'pvs' mapping is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"pvs": {key: {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
+            Config._from_dict(
+                {
+                    "pvs": {key: {"url": "foo"}},
+                    "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz"},
+                }
+            )
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -56,7 +70,11 @@ class TestPVS:
         """Ensure that a missing 'url' field in a 'pvs' mapping entry is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
             Config._from_dict(
-                {"pvs": {"first": {"poll_interval": 60}}, "array": {"a": {"panel": ["1"]}}}
+                {
+                    "pvs": {"first": {"poll_interval": 60}},
+                    "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz"},
+                }
             )
 
         errors = excinfo.value.errors
@@ -80,6 +98,7 @@ class TestPVS:
                 {
                     "pvs": {"first": {"url": "foo", "poll_interval": value}},
                     "array": {"a": {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz"},
                 }
             )
 
@@ -95,6 +114,7 @@ class TestPVS:
             {
                 "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                 "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
 
@@ -113,7 +133,9 @@ class TestArray:
     def test_empty(self) -> None:
         """Ensure that a configuration with an empty 'array' mapping is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {}})
+            Config._from_dict(
+                {"pvs": {"first": {"url": "foo"}}, "array": {}, "mqtt": {"broker": "baz"}}
+            )
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -131,7 +153,13 @@ class TestArray:
     def test_invalid_key(self, key: Any) -> None:
         """Ensure that an invalid key in the 'array' mapping is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"pvs": {"first": {"url": "foo"}}, "array": {key: {"panel": ["1"]}}})
+            Config._from_dict(
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {key: {"panel": ["1"]}},
+                    "mqtt": {"broker": "baz"},
+                }
+            )
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -142,7 +170,13 @@ class TestArray:
     def test_missing_panel(self) -> None:
         """Ensure that a missing 'panel' list in a 'array' mapping entry is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
-            Config._from_dict({"pvs": {"first": {"poll_interval": 60}}, "array": {"a": {}}})
+            Config._from_dict(
+                {
+                    "pvs": {"first": {"poll_interval": 60}},
+                    "array": {"a": {}},
+                    "mqtt": {"broker": "baz"},
+                }
+            )
 
         errors = excinfo.value.errors
         assert errors is not None
@@ -156,6 +190,7 @@ class TestArray:
             {
                 "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                 "array": {"a": {"panel": ["1"]}, "b": {"panel": ["2"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
 
@@ -171,7 +206,11 @@ class TestArray:
         """Ensure that an invalid serial number in the 'panel' list is not accepted."""
         with pytest.raises(ConfigValidationError) as excinfo:
             Config._from_dict(
-                {"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": [panel]}}}
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {"a": {"panel": [panel]}},
+                    "mqtt": {"broker": "baz"},
+                }
             )
 
         errors = excinfo.value.errors
@@ -186,6 +225,7 @@ class TestArray:
             {
                 "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                 "array": {"a": {"panel": ["1"], "azimuth": 123.45}},
+                "mqtt": {"broker": "baz"},
             }
         )
 
@@ -204,6 +244,7 @@ class TestArray:
                 {
                     "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                     "array": {"a": {"panel": ["1"], "azimuth": value}},
+                    "mqtt": {"broker": "baz"},
                 }
             )
 
@@ -219,6 +260,7 @@ class TestArray:
             {
                 "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                 "array": {"a": {"panel": ["1"], "tilt": 12.34}},
+                "mqtt": {"broker": "baz"},
             }
         )
 
@@ -237,6 +279,7 @@ class TestArray:
                 {
                     "pvs": {"first": {"url": "foo"}, "second": {"url": "foo"}},
                     "array": {"a": {"panel": ["1"], "tilt": value}},
+                    "mqtt": {"broker": "baz"},
                 }
             )
 

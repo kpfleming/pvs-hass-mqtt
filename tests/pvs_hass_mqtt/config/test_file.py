@@ -36,7 +36,13 @@ class TestConfigFile:
     def test_minimal(self, minimal_config: MinimalConfig) -> None:
         """Ensure that a minimal configuration file is accepted."""
         minimal_config.config_file.write_text(
-            yaml.dump({"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["abc"]}}})
+            yaml.dump(
+                {
+                    "pvs": {"first": {"url": "foo"}},
+                    "array": {"a": {"panel": ["abc"]}},
+                    "mqtt": {"broker": "baz"},
+                }
+            )
         )
         Config.from_file(minimal_config.config_file)
 

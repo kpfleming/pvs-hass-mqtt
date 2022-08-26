@@ -8,7 +8,11 @@ from pvs_hass_mqtt.config import Config, ConfigValidationError
 def test_simple() -> None:
     """Ensure that the objects from a simple configuration appear in the result."""
     config = Config._from_dict(
-        {"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["abc"]}}}
+        {
+            "pvs": {"first": {"url": "foo"}},
+            "array": {"a": {"panel": ["abc"]}},
+            "mqtt": {"broker": "baz"},
+        }
     )
     assert len(config.pvs) == 1
     pvs = config.pvs[0]
@@ -28,6 +32,7 @@ class TestPVS:
             {
                 "pvs": {"first": {"url": "foo"}, "second": {"url": "bar"}},
                 "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
         assert len(config.pvs) == 2
@@ -37,7 +42,11 @@ class TestPVS:
     def test_default_poll_interval(self) -> None:
         """Ensure that the default poll interval appears in the result."""
         config = Config._from_dict(
-            {"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["abc"]}}}
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
+            }
         )
         assert config.pvs[0].poll_interval == 60
 
@@ -47,6 +56,7 @@ class TestPVS:
             {
                 "pvs": {"first": {"url": "foo", "poll_interval": 53}},
                 "array": {"a": {"panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
         assert config.pvs[0].poll_interval == 53
@@ -59,6 +69,7 @@ class TestArray:
             {
                 "pvs": {"first": {"url": "foo"}},
                 "array": {"a": {"panel": ["abc"]}, "b": {"panel": ["def"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
         assert len(config.array) == 2
@@ -71,6 +82,7 @@ class TestArray:
             {
                 "pvs": {"first": {"url": "foo"}},
                 "array": {"a": {"azimuth": 123.4, "tilt": 76.8, "panel": ["abc"]}},
+                "mqtt": {"broker": "baz"},
             }
         )
         assert config.array[0].azimuth == 123.4
@@ -85,6 +97,7 @@ class TestPanel:
                 {
                     "pvs": {"first": {"url": "foo"}},
                     "array": {"a": {"panel": ["abc", "abc"]}},
+                    "mqtt": {"broker": "baz"},
                 }
             )
 
@@ -97,6 +110,7 @@ class TestPanel:
                 {
                     "pvs": {"first": {"url": "foo"}},
                     "array": {"a": {"panel": ["abc"]}, "b": {"panel": ["abc"]}},
+                    "mqtt": {"broker": "baz"},
                 }
             )
 

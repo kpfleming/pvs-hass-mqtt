@@ -40,3 +40,31 @@ array:
         type: float
         min: 0
         max: 90
+
+mqtt:
+  type: dict
+  required: True
+  schema:
+    broker:
+      type: string
+      required: True
+    port:
+      type: integer
+      required: True
+      default: 1883
+      min: 1
+      max: 65535
+    username:
+      type: string
+    password:
+      type: string
+    client_id:
+      type: string
+    keep_alive:
+      type: integer
+      default: 30
+      min: 0
+    qos:
+      type: integer
+      min: 0
+      max: 2

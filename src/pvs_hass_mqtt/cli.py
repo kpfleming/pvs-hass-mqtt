@@ -165,7 +165,7 @@ def cli(argv: Sequence[str] | None = None, *, test_only: bool = False) -> None:
         exit(4)
 
     try:
-        config = Config.from_file(args.config_file)
+        Config.from_file(args.config_file)
     except ConfigValidationError as exc:
         logger.error(exc)
         exit(5)

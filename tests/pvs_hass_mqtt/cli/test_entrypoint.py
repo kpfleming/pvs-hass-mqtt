@@ -27,7 +27,13 @@ def minimal_config(tmp_path: pathlib.Path) -> MinimalConfig:
     """
     config_file = tmp_path / "config.yml"
     config_file.write_text(
-        json.dumps({"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
+        json.dumps(
+            {
+                "pvs": {"first": {"url": "foo"}},
+                "array": {"a": {"panel": ["1"]}},
+                "mqtt": {"broker": "baz"},
+            }
+        )
     )
     return MinimalConfig(
         config_file=config_file,
