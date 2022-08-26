@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from . import VERSION
+from .config import Config, ConfigValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +63,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="specify the destination for logging output (default: %(default)s)",
     )
     parser.add_argument(
-        "-t", "--test-config", action="store_true", help="test validity of configuration file"
+        "-t",
+        "--test-config",
+        action="store_true",
+        help="test validity of configuration file and exit",
     )
     parser.add_argument(
         "-v",
@@ -159,3 +163,15 @@ def cli(argv: Sequence[str] | None = None, *, test_only: bool = False) -> None:
     if not args.data_dir.is_dir():
         logger.error("Path provided to --data-dir is not a directory: %s", args.data_dir)
         exit(4)
+
+    try:
+        config = Config.from_file(args.config_file)
+    except ConfigValidationError as exc:
+        logger.error(exc)
+        exit(5)
+    except Exception as exc:
+        logger.error(f"While processing configuration file {str(args.config_file)}:\n{exc}")
+        exit(6)
+
+    if args.test_config:
+        exit(0)

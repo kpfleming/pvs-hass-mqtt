@@ -35,11 +35,21 @@ class TestPVS:
         assert config.pvs[1].name == "second"
 
     def test_default_poll_interval(self) -> None:
-        """Ensure that the objects from a simple configuration appear in the result."""
+        """Ensure that the default poll interval appears in the result."""
         config = Config._from_dict(
             {"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["abc"]}}}
         )
         assert config.pvs[0].poll_interval == 60
+
+    def test_default_interval(self) -> None:
+        """Ensure that the specified poll interval appears in the result."""
+        config = Config._from_dict(
+            {
+                "pvs": {"first": {"url": "foo", "poll_interval": 53}},
+                "array": {"a": {"panel": ["abc"]}},
+            }
+        )
+        assert config.pvs[0].poll_interval == 53
 
 
 class TestArray:

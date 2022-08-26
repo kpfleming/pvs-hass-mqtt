@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import pathlib
 from types import ModuleType
@@ -25,7 +26,9 @@ def minimal_config(tmp_path: pathlib.Path) -> MinimalConfig:
     configuration file and a path to a writable data directory.
     """
     config_file = tmp_path / "config.yml"
-    config_file.write_text("")
+    config_file.write_text(
+        json.dumps({"pvs": {"first": {"url": "foo"}}, "array": {"a": {"panel": ["1"]}}})
+    )
     return MinimalConfig(
         config_file=config_file,
         data_dir=tmp_path,
@@ -92,3 +95,59 @@ def test_missing_data_dir(resettable_logging: ModuleType, minimal_config: Minima
             test_only=True,
         )
     assert excinfo.value.code == 4
+
+
+@pytest.mark.logging()
+def test_config_invalid(resettable_logging: ModuleType, minimal_config: MinimalConfig) -> None:
+    """Ensure that invalid config in a configuration file causes the entrypoint to exit."""
+    minimal_config.config_file.write_text(
+        """
+        pvs:
+          first:
+            url: foo
+        array:
+          a:
+            panel:
+              - abc
+              - abc
+        """
+    )
+    with pytest.raises(SystemExit) as excinfo:
+        cli(minimal_config.args, test_only=True)
+    assert excinfo.value.code == 5
+
+
+@pytest.mark.logging()
+def test_config_file_bad_yaml(
+    resettable_logging: ModuleType, minimal_config: MinimalConfig
+) -> None:
+    """Ensure that bad YAML in a configuration file causes the entrypoint to exit."""
+    minimal_config.config_file.write_text(
+        """
+        pvs:
+          first;
+            url: foo
+        array:
+          a:
+            panel:
+              - abc
+        """
+    )
+    with pytest.raises(SystemExit) as excinfo:
+        cli(minimal_config.args, test_only=True)
+    assert excinfo.value.code == 6
+
+
+@pytest.mark.logging()
+def test_config_file_non_yaml(
+    resettable_logging: ModuleType, minimal_config: MinimalConfig
+) -> None:
+    """Ensure that non-YAML in a configuration file causes the entrypoint to exit."""
+    minimal_config.config_file.write_text(
+        """
+        The quick brown fox jumps over the lazy dog.
+        """
+    )
+    with pytest.raises(SystemExit) as excinfo:
+        cli(minimal_config.args, test_only=True)
+    assert excinfo.value.code == 6
