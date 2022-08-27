@@ -160,9 +160,7 @@ def test_config_file_non_yaml(
 
 
 @pytest.mark.logging()
-def test_config_check(
-    resettable_logging: ModuleType, minimal_config: MinimalConfig
-) -> None:
+def test_config_check(resettable_logging: ModuleType, minimal_config: MinimalConfig) -> None:
     """Ensure that '--test-config' produces the proper exit code."""
     with pytest.raises(SystemExit) as excinfo:
         cli(minimal_config.args + ["--test-config"], test_only=True)

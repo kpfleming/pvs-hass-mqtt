@@ -11,8 +11,9 @@ import yaml
 from attrs import define
 from cerberus import Validator  # type: ignore
 
+from hass_mqtt import MQTT
+
 from .array import Array
-from .mqtt import MQTT
 from .panel import Panel
 from .pvs import PVS
 

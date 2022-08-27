@@ -1,4 +1,8 @@
-import logging
+from pvs_hass_mqtt.version import __version__ as VERSION  # noqa: N812
 
-# suppress logging output unless a higher-level logger wants it
-logging.getLogger("hass_mqtt").addHandler(logging.NullHandler())
+from .mqtt import MQTT
+
+__all__ = (
+    MQTT,
+    VERSION,
+)
