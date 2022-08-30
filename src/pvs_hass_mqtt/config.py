@@ -90,6 +90,7 @@ class Config:
             client_id=v.document["mqtt"].get("client_id", None),
             keep_alive=v.document["mqtt"]["keep_alive"],
             qos=v.document["mqtt"]["qos"],
+            hass_topic_prefix=v.document["mqtt"]["hass_topic_prefix"],
         )
 
         return Config(pvs=_pvs, array=_array, mqtt=_mqtt)

@@ -16,3 +16,4 @@ class MQTT:
     client_id: str | None
     keep_alive: int
     qos: int
+    hass_topic_prefix: str
