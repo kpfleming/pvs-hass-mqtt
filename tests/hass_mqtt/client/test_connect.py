@@ -4,7 +4,7 @@ import pytest
 from mock import MagicMock
 from pytest_mock import MockerFixture
 
-from hass_mqtt.mqtt import MQTT
+from hass_mqtt import MQTT
 
 
 @pytest.fixture()
