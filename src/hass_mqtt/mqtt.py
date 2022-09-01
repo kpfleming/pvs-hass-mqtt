@@ -18,7 +18,7 @@ class MQTT:
     keep_alive: int
     qos: int
     hass_topic_prefix: str
-    client: mqtt_client.Client = field(init=False)
+    _client: mqtt_client.Client = field(init=False)
 
     def connect(self) -> None:
         client = mqtt_client.Client(client_id=self.client_id, userdata=self)
@@ -26,4 +26,4 @@ class MQTT:
         if self.username:
             client.username_pw_set(self.username, self.password)
         client.connect(host=self.broker, port=self.port, keepalive=self.keep_alive)
-        self.client = client
+        self._client = client
