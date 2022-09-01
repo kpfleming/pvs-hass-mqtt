@@ -112,9 +112,9 @@ python = ["3.8", "3.9", "3.10", "3.11"]
 [tool.hatch.envs.ci.scripts]
 ci = [
     # run tests that manipulate logging configuration
-    "pytest -p 'no:logging' -m 'logging' --cov-branch --cov=pvs_hass_mqtt tests/",
+    "pytest -p 'no:logging' -m 'logging' --cov-branch --cov=pvs_hass_mqtt --cov=hass_mqtt tests/",
     # run tests that do not manipulate logging configuration
-    "pytest -m 'not logging' --cov-append  --cov-branch --cov-fail-under=90 --cov=pvs_hass_mqtt tests/",
+    "pytest -m 'not logging' --cov-append  --cov-branch --cov-fail-under=90 --cov=pvs_hass_mqtt --cov=hass_mqtt tests/",
 ]
 
 [tool.hatch.envs.ci-systemd]
