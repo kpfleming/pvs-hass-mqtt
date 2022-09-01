@@ -17,6 +17,12 @@ runs:
     shell: bash
     env:
       HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
+  - name: run mypy (library)
+    if: success() || failure()
+    run: hatch run lint:mypy --package hass_mqtt
+    shell: bash
+    env:
+      HATCH_ENV_TYPE_VIRTUAL_PATH: /root/hatch/lint
   - name: run mypy (tests)
     if: success() || failure()
     run: hatch run lint:mypy tests

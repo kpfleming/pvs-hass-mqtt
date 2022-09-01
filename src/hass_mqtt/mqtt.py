@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-import paho.mqtt.client as mqtt_client
+import paho.mqtt.client as mqtt_client  # type: ignore
 from attrs import define, field
 
 logger = logging.getLogger(__name__)

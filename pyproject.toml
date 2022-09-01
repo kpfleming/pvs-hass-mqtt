@@ -92,6 +92,7 @@ lint = [
      "isort .",
      "flake8",
      "mypy --package pvs_hass_mqtt",
+     "mypy --package hass_mqtt",
      "mypy tests",
      "shellcheck workflow-support/*.sh",
 ]
