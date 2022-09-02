@@ -228,8 +228,8 @@ class TestMQTT:
         )
         assert config.mqtt.qos == 2
 
-    def test_default_hass_topic_prefix(self) -> None:
-        """Ensure that the default hass_topic_prefix appears in the result."""
+    def test_default_discovery_prefix(self) -> None:
+        """Ensure that the default discovery_prefix appears in the result."""
         config = Config._from_dict(
             {
                 "pvs": {"first": {"url": "foo"}},
@@ -237,15 +237,15 @@ class TestMQTT:
                 "mqtt": {"broker": "baz"},
             }
         )
-        assert config.mqtt.hass_topic_prefix == "homeassistant"
+        assert config.mqtt.discovery_prefix == "homeassistant"
 
-    def test_hass_topic_prefix(self) -> None:
-        """Ensure that the specified hass_topic_prefix appears in the result."""
+    def test_discovery_prefix(self) -> None:
+        """Ensure that the specified discovery_prefix appears in the result."""
         config = Config._from_dict(
             {
                 "pvs": {"first": {"url": "foo"}},
                 "array": {"a": {"panel": ["abc"]}},
-                "mqtt": {"broker": "baz", "hass_topic_prefix": "blah"},
+                "mqtt": {"broker": "baz", "discovery_prefix": "blah"},
             }
         )
-        assert config.mqtt.hass_topic_prefix == "blah"
+        assert config.mqtt.discovery_prefix == "blah"

@@ -69,7 +69,7 @@ mqtt:
       default: 0
       min: 0
       max: 2
-    hass_topic_prefix:
+    discovery_prefix:
       type: string
       default: homeassistant
       required: true

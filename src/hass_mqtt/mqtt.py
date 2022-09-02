@@ -28,7 +28,7 @@ class MQTT:
     client_id: str | None = None
     keep_alive: int
     qos: int
-    hass_topic_prefix: str
+    discovery_prefix: str
     _client: mqtt_client.Client = field(init=False)
 
     def connect(self) -> None:

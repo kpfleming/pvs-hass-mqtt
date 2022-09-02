@@ -450,12 +450,12 @@ class TestMQTT:
         assert "qos" in errors["mqtt"][0]
         assert error in errors["mqtt"][0]["qos"][0]
 
-    def test_hass_topic_prefix(self) -> None:
-        """Ensure that a 'hass_topic_prefix' field in the 'mqtt' mapping is accepted."""
+    def test_discovery_prefix(self) -> None:
+        """Ensure that a 'discovery_prefix' field in the 'mqtt' mapping is accepted."""
         Config._from_dict(
             {
                 "pvs": {"first": {"url": "foo"}},
                 "array": {"a": {"panel": ["1"]}},
-                "mqtt": {"broker": "baz", "hass_topic_prefix": "blah"},
+                "mqtt": {"broker": "baz", "discovery_prefix": "blah"},
             }
         )
