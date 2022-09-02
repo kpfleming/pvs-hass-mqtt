@@ -4,6 +4,7 @@ import pytest
 from mock import MagicMock
 from pytest_mock import MockerFixture
 
+import hass_mqtt.mqtt
 from hass_mqtt import MQTT
 
 
@@ -65,3 +66,11 @@ def test_broker_port_keep_alive(mock_client: MagicMock) -> None:
     """Ensure that the specified broker, port, and keep_alive are passed to the MQTT client."""
     MQTT(broker="baz", port=42, keep_alive=39, qos=0, hass_topic_prefix="").connect()
     mock_client.return_value.connect.assert_called_once_with(host="baz", port=42, keepalive=39)
+
+
+def test_client_callbacks(mock_client: MagicMock) -> None:
+    """Ensure that the MQTT client is connected to the callback functions."""
+    mqtt = MQTT(broker="", port=0, keep_alive=0, qos=0, hass_topic_prefix="")
+    mqtt.connect()
+    assert mock_client.return_value.on_connect is hass_mqtt.mqtt._on_connect
+    assert mock_client.return_value.on_disconnect is hass_mqtt.mqtt._on_disconnect
