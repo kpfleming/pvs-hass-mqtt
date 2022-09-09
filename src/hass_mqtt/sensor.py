@@ -6,7 +6,7 @@ from typing import Protocol
 
 from attrs import define, field
 
-from . import Entity
+from .entity import Entity
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +45,26 @@ class SensorDeviceClass(Enum):
     voltage = auto()
 
 
+class SensorStateClass(Enum):
+    measurement = auto()
+    total = auto()
+    total_increasing = auto()
+
+
+class UnitOfMeasurement(Enum):
+    temperature_celsius = "C"
+    temperature_fahrenheit = "F"
+    power_watt = "W"
+    power_kilowatt = "kW"
+    voltage = "V"
+    energy_watt_hour = "Wh"
+    energy_kilowatt_hour = "kWh"
+    current_ampere = "A"
+    power_volt_ampere = "VA"
+
+
 @define(kw_only=True)
 class Sensor(Entity, Protocol):
-    # need state_class
-    # need unit_of_measurement
     device_class: SensorDeviceClass | None = field(init=False)
+    state_class: SensorStateClass | None = None
+    unit_of_measurement: UnitOfMeasurement | None = None

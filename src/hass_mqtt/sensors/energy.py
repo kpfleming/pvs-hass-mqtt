@@ -4,7 +4,7 @@ import logging
 
 from attrs import define
 
-from .. import Sensor, SensorDeviceClass
+from ..sensor import Sensor, SensorDeviceClass
 
 logger = logging.getLogger(__name__)
 

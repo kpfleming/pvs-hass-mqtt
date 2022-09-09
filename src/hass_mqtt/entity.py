@@ -6,7 +6,7 @@ from typing import Protocol
 
 from attrs import define
 
-from . import Device
+from .device import Device
 
 logger = logging.getLogger(__name__)
 
