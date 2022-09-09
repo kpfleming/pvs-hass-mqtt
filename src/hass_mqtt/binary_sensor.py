@@ -42,24 +42,6 @@ class BinarySensorDeviceClass(Enum):
     window = auto()
 
 
-class SensorStateClass(Enum):
-    measurement = auto()
-    total = auto()
-    total_increasing = auto()
-
-
-class UnitOfMeasurement(Enum):
-    temperature_celsius = "C"
-    temperature_fahrenheit = "F"
-    power_watt = "W"
-    powet_kilowatt = "kW"
-    voltage = "V"
-    energy_watt_hour = "Wh"
-    energy_kilowatt_hour = "kWh"
-    current_ampere = "A"
-    power_volt_ampere = "VA"
-
-
 @define(kw_only=True)
 class BinarySensor(Entity, Protocol):
     device_class: BinarySensorDeviceClass | None = field(init=False)

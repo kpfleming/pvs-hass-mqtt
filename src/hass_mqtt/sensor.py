@@ -52,7 +52,11 @@ class SensorStateClass(Enum):
 
 
 class UnitOfMeasurement(Enum):
+    apparent_power_kilovolt_ampere = "kVA"
+    apparent_power_volt_ampere = "VA"
     current_ampere = "A"
+    current_kiloampere = "kA"
+    current_megaampere = "MA"
     current_milliampere = "mA"
     current_nanoampere = "nA"
     energy_kilowatt_hour = "kWh"
@@ -61,12 +65,10 @@ class UnitOfMeasurement(Enum):
     frequency_hertz = "Hz"
     frequency_kilohertz = "kHz"
     frequency_megahertz = "MHz"
-    power_kilovolt_ampere = "kVA"
     power_kilowatt = "kW"
     power_megawatt = "MW"
     power_milliwatt = "mW"
     power_nanowatt = "nW"
-    power_volt_ampere = "VA"
     power_watt = "W"
     temperature_celsius = "C"
     temperature_fahrenheit = "F"
