@@ -75,7 +75,5 @@ class TestConfigFile:
     def test_file_path_in_error_message(self, minimal_config: MinimalConfig) -> None:
         """Ensure that the path to an invalid configuration file is included in the error message."""
         minimal_config.config_file.write_text(yaml.dump({"pvs": {"first": {"url": "foo"}}}))
-        with pytest.raises(ConfigValidationError) as excinfo:
+        with pytest.raises(ConfigValidationError, match=f"^{str(minimal_config.config_file)}"):
             Config.from_file(minimal_config.config_file)
-
-        assert excinfo.value.message.startswith(str(minimal_config.config_file))

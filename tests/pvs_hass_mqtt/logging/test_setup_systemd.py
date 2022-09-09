@@ -37,18 +37,16 @@ def mock_handlers(mocker: MockerFixture) -> Iterator[JournalHandlers]:
 def test_systemd_not_available(mocker: MockerFixture) -> None:
     """Ensure that systemd logging setup fails when systemd package is not available."""
     mocker.patch.dict("sys.modules", {"systemd": None})
-    with pytest.raises(SystemdLoggingSetupError) as excinfo:
+    with pytest.raises(SystemdLoggingSetupError, match="not installed"):
         setup_logging("systemd", logging.WARNING)
-    assert "not installed" in str(excinfo.value)
 
 
 @pytest.mark.logging()
 def test_systemd_not_in_use(mock_handlers: JournalHandlers, mocker: MockerFixture) -> None:
     """Ensure that systemd logging setup fails when systemd is not in use."""
     mocker.patch.dict("os.environ", clear=True)
-    with pytest.raises(SystemdLoggingSetupError) as excinfo:
+    with pytest.raises(SystemdLoggingSetupError, match="not running"):
         setup_logging("systemd", logging.WARNING)
-    assert "not running" in str(excinfo.value)
 
 
 @pytest.mark.logging()

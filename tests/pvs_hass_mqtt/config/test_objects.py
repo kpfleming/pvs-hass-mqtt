@@ -92,7 +92,7 @@ class TestArray:
 class TestPanel:
     def test_duplicate_serial(self) -> None:
         """Ensure that two Panels with the same serial are not accepted."""
-        with pytest.raises(ConfigValidationError) as excinfo:
+        with pytest.raises(ConfigValidationError, match="Panel 'abc' defined more than once"):
             Config._from_dict(
                 {
                     "pvs": {"first": {"url": "foo"}},
@@ -101,11 +101,9 @@ class TestPanel:
                 }
             )
 
-        assert excinfo.value.message == "Panel 'abc' defined more than once"
-
     def test_same_serial_multiple_arrays(self) -> None:
         """Ensure that two Panels with the same serial, in different Arrays, are not accepted."""
-        with pytest.raises(ConfigValidationError) as excinfo:
+        with pytest.raises(ConfigValidationError, match="Panel 'abc' defined more than once"):
             Config._from_dict(
                 {
                     "pvs": {"first": {"url": "foo"}},
@@ -113,8 +111,6 @@ class TestPanel:
                     "mqtt": {"broker": "baz"},
                 }
             )
-
-        assert excinfo.value.message == "Panel 'abc' defined more than once"
 
 
 class TestMQTT:
