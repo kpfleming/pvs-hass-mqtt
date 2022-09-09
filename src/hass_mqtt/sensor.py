@@ -52,15 +52,30 @@ class SensorStateClass(Enum):
 
 
 class UnitOfMeasurement(Enum):
+    current_ampere = "A"
+    current_milliampere = "mA"
+    current_nanoampere = "nA"
+    energy_kilowatt_hour = "kWh"
+    energy_megawatt_hour = "MWh"
+    energy_watt_hour = "Wh"
+    frequency_hertz = "Hz"
+    frequency_kilohertz = "kHz"
+    frequency_megahertz = "MHz"
+    power_kilovolt_ampere = "kVA"
+    power_kilowatt = "kW"
+    power_megawatt = "MW"
+    power_milliwatt = "mW"
+    power_nanowatt = "nW"
+    power_volt_ampere = "VA"
+    power_watt = "W"
     temperature_celsius = "C"
     temperature_fahrenheit = "F"
-    power_watt = "W"
-    power_kilowatt = "kW"
-    voltage = "V"
-    energy_watt_hour = "Wh"
-    energy_kilowatt_hour = "kWh"
-    current_ampere = "A"
-    power_volt_ampere = "VA"
+    temperature_kelvin = "K"
+    voltage_kilovolt = "kV"
+    voltage_megavolt = "MV"
+    voltage_millivolt = "mV"
+    voltage_nanovolt = "nV"
+    voltage_volt = "V"
 
 
 @define(kw_only=True)
