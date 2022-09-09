@@ -96,3 +96,27 @@ def test_systemd_debug_handler_module_name(mock_handlers: JournalHandlers) -> No
     )
     msg = fmt.format(rec)
     assert "TESTnameTEST" in msg
+
+
+@pytest.mark.logging()
+def test_systemd_debug_handler_filter(mock_handlers: JournalHandlers) -> None:
+    """Ensure that the debug handler's filter only permits DEBUG messages."""
+    setup_logging("systemd", logging.DEBUG)
+    mock_handlers.debug.addFilter.assert_called_once()
+    filt = mock_handlers.debug.addFilter.call_args[0][0]
+    rec = logging.makeLogRecord(
+        {
+            "name": "TESTnameTEST",
+            "msg": "TEST",
+            "levelno": logging.DEBUG,
+        }
+    )
+    assert filt(rec)
+    rec = logging.makeLogRecord(
+        {
+            "name": "TESTnameTEST",
+            "msg": "TEST",
+            "levelno": logging.INFO,
+        }
+    )
+    assert not filt(rec)
