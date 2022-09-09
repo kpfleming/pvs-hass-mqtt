@@ -64,3 +64,4 @@ class UnitOfMeasurement(Enum):
 class BinarySensor(Entity, Protocol):
     device_class: BinarySensorDeviceClass | None = field(init=False)
     off_delay: int | None = None
+    state: bool = False

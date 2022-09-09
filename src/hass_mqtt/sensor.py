@@ -83,3 +83,4 @@ class Sensor(Entity, Protocol):
     device_class: SensorDeviceClass | None = field(init=False)
     state_class: SensorStateClass | None = None
     unit_of_measurement: UnitOfMeasurement | None = None
+    value: float = 0

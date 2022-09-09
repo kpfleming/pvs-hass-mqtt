@@ -16,9 +16,9 @@ class EntityCategory(Enum):
     diagnostic = auto()
 
 
-@define(kw_only=True)
+@define(kw_only=True, eq=False)
 class Entity(Protocol):
-    name: str
+    name: str | None = None
     object_id: str | None = None
     device: Device | None = None
     enabled_by_default: bool = True

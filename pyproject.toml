@@ -115,6 +115,8 @@ ci = [
     "pytest -p 'no:logging' -m 'logging' --cov-branch --cov=pvs_hass_mqtt --cov=hass_mqtt tests/",
     # run tests that do not manipulate logging configuration
     "pytest -m 'not logging' --cov-append  --cov-branch --cov-fail-under=90 --cov=pvs_hass_mqtt --cov=hass_mqtt tests/",
+    # produce a coverage report with 'missing' lines indicated
+    "coverage report -m",
 ]
 
 [tool.hatch.envs.ci-systemd]
