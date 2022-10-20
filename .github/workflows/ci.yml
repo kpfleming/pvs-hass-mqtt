@@ -33,7 +33,7 @@ env:
 
 jobs:
   preflight:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     outputs:
       need_image: ${{ steps.preflight.outputs.need_image }}
       image_tag: ${{ steps.preflight.outputs.image_tag }}
@@ -44,7 +44,7 @@ jobs:
     - id: preflight
       uses: ./.github/actions/preflight
   ci-image:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
     - preflight
     steps:
@@ -56,7 +56,7 @@ jobs:
         quay_username: ${{ secrets.QUAY_BOT_NAME }}
         quay_password: ${{ secrets.QUAY_BOT_PASSWORD }}
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
     - preflight
     - ci-image
