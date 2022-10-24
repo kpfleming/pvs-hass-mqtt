@@ -27,7 +27,7 @@ jobs:
     - id: preflight
       uses: ./.github/actions/preflight
     - name: ensure image has been created
-      uses: lewagon/wait-on-check-action@v1.1.2
+      uses: lewagon/wait-on-check-action@v1.2.0
       if: github.event_name != 'pull_request'
       with:
         ref: ${{ github.sha }}
@@ -35,7 +35,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 30
     - name: ensure image has been created
-      uses: lewagon/wait-on-check-action@v1.1.2
+      uses: lewagon/wait-on-check-action@v1.2.0
       if: github.event_name == 'pull_request'
       with:
         ref: ${{ github.event.pull_request.head.sha }}
